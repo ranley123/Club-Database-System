@@ -261,6 +261,55 @@ public class Main {
         }
     }
 
+    public static void initMatches(Connection connection, String filename){
+        try{
+            FileReader input = new FileReader(filename);
+            BufferedReader br = new BufferedReader(input);
+            String line = br.readLine(); // read the column names
+            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = null;
+
+            // init Player table
+            statement.executeUpdate("DROP TABLE IF EXISTS Played_Match");
+            String sql = "CREATE TABLE Played_Match" +
+                    "(id INTEGER not NULL, " +
+                    "p1_email VARCHAR(50), " +
+                    "p2_email VARCHAR(50), " +
+                    "p1_games_won INTEGER, " +
+                    "p2_games_won INTEGER," +
+                    "date_played DATE, " +
+                    "court_number INTEGER, " +
+                    "venue_name VARCHAR(50), " +
+                    "league_name VARCHAR(50), " +
+                    "league_year INTEGER, " +
+                    "PRIMARY KEY (id))";
+            statement.executeUpdate(sql);
+            System.out.println("Table Played_Match is created ");
+
+            sql = "INSERT INTO Played_Match VALUES (?, ?)";
+
+            while((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+
+
+
+                preparedStatement = connection.prepareStatement(sql);
+
+                preparedStatement.setInt(1, number);
+                preparedStatement.setString(2, venue_name);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+
+            }
+            statement.close();
+            connection.close();
+
+        }
+        catch (IOException | SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     public static void printDatabase(String tableName){
         Connection connection = makeConnection();
         try{
