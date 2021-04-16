@@ -1,3 +1,4 @@
+import Exceptions.PhoneTypeOutOfDomainException;
 import Model.*;
 
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+
 public class Main {
     Connection dbConnection = null;
 
@@ -17,7 +19,7 @@ public class Main {
         Main main = new Main();
         main.initDatabase();
 //        main.initInterface();
-        printDatabase("Person");
+//        printDatabase("Player_Phone");
     }
 
     private void initInterface() {
@@ -70,7 +72,7 @@ public class Main {
         return connection;
     }
 
-    public static void initPerson(Connection connection, String filename){
+    public static void initPlayer(Connection connection, String filename){
         try{
             FileReader input = new FileReader(filename);
             BufferedReader br = new BufferedReader(input);
@@ -78,50 +80,82 @@ public class Main {
             Statement statement = connection.createStatement();
             PreparedStatement preparedStatement = null;
 
-            // init schema
-            statement.executeUpdate("DROP TABLE IF EXISTS Person");
-            String sql = "CREATE TABLE Person"
+            // init Player table
+            statement.executeUpdate("DROP TABLE IF EXISTS Player");
+            String sql = "CREATE TABLE Player"
                     + "(forename VARCHAR(50), "
-                    + "middlename VARCHAR(50), "
+                    + "middlenames VARCHAR(50), "
                     + "surname VARCHAR(50), "
-                    + "dataOfBirth VARCHAR(50), "
+                    + "date_of_birth DATE, "
                     + "email VARCHAR(50) not NULL, "
                     + " PRIMARY KEY (email))";
             statement.executeUpdate(sql);
-            System.out.println("Table Person is created ");
+            System.out.println("Table Player is created ");
 
-            sql = "INSERT INTO Person VALUES (?, ?, ?, ?, ?)";
+            // init Player_Phone table
+            statement.executeUpdate("DROP TABLE IF EXISTS Player_Phone");
+            sql = "CREATE TABLE Player_Phone"
+                    + "(email VARCHAR(50) not NULL, "
+                    + "phone_number VARCHAR(20), "
+                    + "phone_type VARCHAR(10), "
+                    + "PRIMARY KEY (email, phone_number))";
+            statement.executeUpdate(sql);
+            System.out.println("Table Player_Phone is created ");
+
+            sql = "INSERT INTO Player VALUES (?, ?, ?, ?, ?)";
 
             while((line = br.readLine()) != null) {
                 String[] attributes = line.split(",");
                 String forename = attributes[0];
                 String middlename = attributes[1];
                 String surname = attributes[2];
-//                Date dateOfBirth = Date.valueOf(attributes[3]);
-                String dateOfBirth = attributes[3];
+
+                // prepare birthOfDate
+                String[] birthdayStr = attributes[3].split("/");
+                String birthFormat = "";
+                for(int i = birthdayStr.length - 1; i >= 0; i--){
+                    birthFormat += birthdayStr[i];
+                    if(i > 0)
+                        birthFormat += "-";
+                }
+                Date dateOfBirth = Date.valueOf(birthFormat);
+
                 String email = attributes[4];
 
                 preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setString(1, forename);
                 preparedStatement.setString(2, middlename);
                 preparedStatement.setString(3, surname);
-                preparedStatement.setString(4, dateOfBirth);
+                preparedStatement.setDate(4, dateOfBirth);
                 preparedStatement.setString(5, email);
                 preparedStatement.executeUpdate();
+                preparedStatement.close();
 
-//                for(int i = 5; i < attributes.length; i++){
-//                    String curPhone = attributes[i];
-//
-//
-//                }
+                String newsql = "INSERT INTO Player_Phone VALUES (?, ?, ?)";
+                for(int i = 5; i < attributes.length; i++){
+                    String curPhone = attributes[i];
+                    curPhone = curPhone.replaceAll("\\p{Punct}","");
+                    curPhone = curPhone.trim();
+                    int index = curPhone.lastIndexOf(' ');
+                    String phoneNumber = curPhone.substring(0, index).trim();
+                    String phoneType = curPhone.substring(index, curPhone.length());
+                    phoneType = phoneType.trim();
 
-//            statement.executeUpdate("DROP TABLE IF EXISTS club");
-//            statement.executeUpdate("CREATE TABLE club (id int, question VARCHAR(100))");
+                    // need to add more to handle issues
+                    if(phoneType.compareTo("home") != 0 && phoneType.compareTo("mobile") != 0 && phoneType.compareTo("work") != 0)
+                        throw new PhoneTypeOutOfDomainException(phoneType);
+
+                    preparedStatement = connection.prepareStatement(newsql);
+                    preparedStatement.setString(1, email);
+                    preparedStatement.setString(2, phoneNumber);
+                    preparedStatement.setString(3, phoneType);
+                    preparedStatement.executeUpdate();
+                };
             }
 
             statement.close();
         }
-        catch (IOException | SQLException e){
+        catch (IOException | SQLException | PhoneTypeOutOfDomainException e){
             e.printStackTrace();
         }
     }
@@ -133,12 +167,10 @@ public class Main {
             String sql = "SELECT * FROM " + tableName;
             ResultSet rs = statement.executeQuery(sql);
             ResultSetMetaData rsmd = rs.getMetaData();
-            int columnsNumber = rsmd.getColumnCount();
+//            int columnsNumber = rsmd.getColumnCount();
 
             while(rs.next()){
-                for(int i = 1; i < columnsNumber; i++){
-                    System.out.println(rs.getString(i) + " ");
-                }
+                System.out.println(rs.getString(3));
             }
 
             connection.close();
@@ -151,7 +183,7 @@ public class Main {
 
     private void initDatabase() {
         Connection connection = makeConnection();
-        initPerson(connection, "src/People.csv");
+        initPlayer(connection, "src/People.csv");
 
 
 //        try {
