@@ -24,7 +24,7 @@ public class Player implements Model{
 
     @Override
     public String toString() {
-        return email;
+        return forename;
     }
 
     @Override

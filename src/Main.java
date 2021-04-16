@@ -19,7 +19,8 @@ public class Main {
         Main main = new Main();
         main.initDatabase();
 //        main.initInterface();
-//        printDatabase("Player_Phone");
+        printDatabase("Court");
+//        getAllPlayers();
     }
 
     private void initInterface() {
@@ -54,6 +55,23 @@ public class Main {
         mainFrame.setSize(400, 400);
         mainFrame.setLayout(null);
         mainFrame.setVisible(true);
+    }
+
+    private void initDatabase() {
+        Connection connection = makeConnection();
+//        initPlayer(connection, "src/People.csv");
+//        initVenues(connection, "src/Venues.csv");
+        initCourts(connection, "src/Courts.csv");
+//        try {
+//            Statement statement = null;
+//            statement = dbConnection.createStatement();
+//            statement.executeUpdate("DROP TABLE IF EXISTS club");
+//            statement.executeUpdate("CREATE TABLE club (id int, question VARCHAR(100))");
+//            statement.close();
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+
     }
 
     public static Connection makeConnection() {
@@ -142,6 +160,7 @@ public class Main {
                     phoneType = phoneType.trim();
 
                     // need to add more to handle issues
+
                     if(phoneType.compareTo("home") != 0 && phoneType.compareTo("mobile") != 0 && phoneType.compareTo("work") != 0)
                         throw new PhoneTypeOutOfDomainException(phoneType);
 
@@ -150,12 +169,94 @@ public class Main {
                     preparedStatement.setString(2, phoneNumber);
                     preparedStatement.setString(3, phoneType);
                     preparedStatement.executeUpdate();
+                    preparedStatement.close();
                 };
             }
 
             statement.close();
         }
         catch (IOException | SQLException | PhoneTypeOutOfDomainException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void initVenues(Connection connection, String filename){
+        try{
+            FileReader input = new FileReader(filename);
+            BufferedReader br = new BufferedReader(input);
+            String line = br.readLine(); // read the column names
+            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = null;
+
+            // init Player table
+            statement.executeUpdate("DROP TABLE IF EXISTS Venue");
+            String sql = "CREATE TABLE Venue"
+                    + "(name VARCHAR(50) not NULL, "
+                    + "address VARCHAR(50), "
+                    + " PRIMARY KEY (name))";
+            statement.executeUpdate(sql);
+            System.out.println("Table Venue is created ");
+
+            sql = "INSERT INTO Venue VALUES (?, ?)";
+
+            while((line = br.readLine()) != null) {
+                int index = line.indexOf(",");
+                String name = line.substring(0, index).trim();
+                String address = line.substring(index, line.length()).trim();
+                address = address.replaceAll("\\p{Punct}","");
+                preparedStatement = connection.prepareStatement(sql);
+
+                preparedStatement.setString(1, name);
+                preparedStatement.setString(2, address);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+
+            }
+            statement.close();
+            connection.close();
+
+        }
+        catch (IOException | SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void initCourts(Connection connection, String filename){
+        try{
+            FileReader input = new FileReader(filename);
+            BufferedReader br = new BufferedReader(input);
+            String line = br.readLine(); // read the column names
+            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = null;
+
+            // init Player table
+            statement.executeUpdate("DROP TABLE IF EXISTS Court");
+            String sql = "CREATE TABLE Court"
+                    + "(number INTEGER not NULL, "
+                    + "venue_name VARCHAR(50) not NULL, "
+                    + "PRIMARY KEY (number, venue_name))";
+            statement.executeUpdate(sql);
+            System.out.println("Table Court is created ");
+
+            sql = "INSERT INTO Court VALUES (?, ?)";
+
+            while((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                String venue_name = parts[0];
+                int number = Integer.parseInt(parts[1]);
+                preparedStatement = connection.prepareStatement(sql);
+
+                preparedStatement.setInt(1, number);
+                preparedStatement.setString(2, venue_name);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+
+            }
+            statement.close();
+            connection.close();
+
+        }
+        catch (IOException | SQLException e){
             e.printStackTrace();
         }
     }
@@ -167,10 +268,9 @@ public class Main {
             String sql = "SELECT * FROM " + tableName;
             ResultSet rs = statement.executeQuery(sql);
             ResultSetMetaData rsmd = rs.getMetaData();
-//            int columnsNumber = rsmd.getColumnCount();
 
             while(rs.next()){
-                System.out.println(rs.getString(3));
+                System.out.println(rs.getString(1));
             }
 
             connection.close();
@@ -181,22 +281,6 @@ public class Main {
 
     }
 
-    private void initDatabase() {
-        Connection connection = makeConnection();
-        initPlayer(connection, "src/People.csv");
-
-
-//        try {
-//            Statement statement = null;
-//            statement = dbConnection.createStatement();
-//            statement.executeUpdate("DROP TABLE IF EXISTS club");
-//            statement.executeUpdate("CREATE TABLE club (id int, question VARCHAR(100))");
-//            statement.close();
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//        }
-
-    }
 
     public static ArrayList<Model> getAllPlayers(){
         ArrayList<Model> playerLists = new ArrayList<>();
@@ -205,42 +289,37 @@ public class Main {
 
         try{
             statement = connection.createStatement();
-            String query ="select\n" +
-                    "player.email,\n" +
-                    "player.forename,\n" +
-                    "player.middlename,\n" +
-                    "player.surname,\n" +
-                    "player_phone.phoneNumber\n" +
-                    "from\n" +
-                    "player, player_phone\n" +
-                    "where player.email = player_phone.email;";
+            String query ="SELECT\n" +
+                    "Player.email,\n" +
+                    "Player.forename,\n" +
+                    "Player.middlenames,\n" +
+                    "Player.surname,\n" +
+                    "Player_Phone.phone_number\n" +
+                    "FROM\n" +
+                    "Player, Player_Phone\n" +
+                    "where Player.email = Player_Phone.email;";
 
             ResultSet playerResults  = statement.executeQuery(query);
+
             while(playerResults.next()){
                 // Retrieve by column label
                 String email = playerResults.getString("email");
                 String forename = playerResults.getString("forename");
-                String middlename = playerResults.getNString("middlename");
+                String middlename = playerResults.getString("middlenames");
                 String surname = playerResults.getString("surname");
-                String phoneNumber = playerResults.getString("phoneNumber");
+                String phoneNumber = playerResults.getString("phone_number");
 
                 Player player = new Player(email, forename, middlename, surname, null, phoneNumber);
-                if(playerLists.contains(player)){
-//                    Player oldPlayer = playerLists.get()
-                }
-                else{
-                    playerLists.add(player);
-                }
 
+                playerLists.add(player);
 
             }
             playerResults.close();
+
         }
         catch (SQLException e){
             e.printStackTrace();
         }
-
-
 
         return playerLists;
     }
