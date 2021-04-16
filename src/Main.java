@@ -1,7 +1,10 @@
+import Model.*;
+
 import java.awt.event.ActionListener;
 import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class Main {
     Connection dbConnection = null;
@@ -11,6 +14,7 @@ public class Main {
         Main main = new Main();
 //        main.initDatabase();
         main.initInterface();
+        ODReader reader = new ODReader("src/squash_club_data.ods");
     }
 
     private void initInterface() {
@@ -47,8 +51,8 @@ public class Main {
         mainFrame.setVisible(true);
     }
 
-    private void makeConnection() {
-        dbConnection = null;
+    public static Connection makeConnection() {
+        Connection connection = null;
 
         try {
             String dbUrl = "jdbc:sqlite:test";
@@ -56,10 +60,11 @@ public class Main {
             String passwd = ".611MKA73dHitM";
 
             System.out.println("Connecting to Database ...");
-            dbConnection = DriverManager.getConnection(dbUrl);
+            connection = DriverManager.getConnection(dbUrl);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return connection;
     }
 
     private void initDatabase() {
@@ -74,5 +79,52 @@ public class Main {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static ArrayList<Model> getAllPlayers(){
+        ArrayList<Model> playerLists = new ArrayList<>();
+        Connection connection = makeConnection();
+        Statement statement = null;
+
+        try{
+            statement = connection.createStatement();
+            String query ="select\n" +
+                    "player.email,\n" +
+                    "player.forename,\n" +
+                    "player.middlename,\n" +
+                    "player.surname,\n" +
+                    "player_phone.phoneNumber\n" +
+                    "from\n" +
+                    "player, player_phone\n" +
+                    "where player.email = player_phone.email;";
+
+            ResultSet playerResults  = statement.executeQuery(query);
+            while(playerResults.next()){
+                // Retrieve by column label
+                String email = playerResults.getString("email");
+                String forename = playerResults.getString("forename");
+                String middlename = playerResults.getNString("middlename");
+                String surname = playerResults.getString("surname");
+                String phoneNumber = playerResults.getString("phoneNumber");
+
+                Player player = new Player(email, forename, middlename, surname, null, phoneNumber);
+                if(playerLists.contains(player)){
+//                    Player oldPlayer = playerLists.get()
+                }
+                else{
+                    playerLists.add(player);
+                }
+
+
+            }
+            playerResults.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
+
+
+        return playerLists;
     }
 }
