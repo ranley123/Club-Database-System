@@ -4,12 +4,14 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class DatabaseGUI {
+    JFrame mainFrame;
+
     public DatabaseGUI(){
         initInterface();
     }
 
     private void initInterface(){
-        JFrame mainFrame = new JFrame("Button Example");
+        mainFrame = new JFrame("Database");
         JLabel usernameLabel = new JLabel("username");
         JLabel passwordLabel = new JLabel("password");
         JTextField usernameText = new JTextField();
