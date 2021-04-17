@@ -9,6 +9,7 @@ import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Main {
@@ -19,7 +20,7 @@ public class Main {
         Main main = new Main();
         main.initDatabase();
 //        main.initInterface();
-        printDatabase("League_Player");
+//        printDatabase("League_Player");
 //        getAllPlayers();
     }
 
@@ -59,12 +60,12 @@ public class Main {
 
     private void initDatabase() {
         Connection connection = makeConnection();
-//        initPlayer(connection, "src/People.csv");
+        initPlayer(connection, "src/People.csv");
 //        initVenues(connection, "src/Venues.csv");
 //        initCourts(connection, "src/Courts.csv");
 //        initMatches(connection, "src/Matches.csv");
 //        initLeague(connection, "src/Leagues.csv");
-        initLeaguePlayer(connection, "src/LeaguePlayer.csv");
+//        initLeaguePlayer(connection, "src/LeaguePlayer.csv");
 //        try {
 //            Statement statement = null;
 //            statement = dbConnection.createStatement();
@@ -450,6 +451,8 @@ public class Main {
 
     public static ArrayList<Model> getAllPlayers(){
         ArrayList<Model> playerLists = new ArrayList<>();
+        HashMap<String, Model> map = new HashMap<>();
+
         Connection connection = makeConnection();
         Statement statement = null;
 
