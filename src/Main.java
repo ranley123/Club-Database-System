@@ -63,7 +63,8 @@ public class Main {
 //        initVenues(connection, "src/Venues.csv");
 //        initCourts(connection, "src/Courts.csv");
 //        initMatches(connection, "src/Matches.csv");
-        initLeague(connection, "src/Leagues.csv");
+//        initLeague(connection, "src/Leagues.csv");
+        initLeaguePlayer(connection, "src/LeaguePlayer.csv");
 //        try {
 //            Statement statement = null;
 //            statement = dbConnection.createStatement();
