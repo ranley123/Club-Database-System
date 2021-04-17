@@ -19,7 +19,7 @@ public class Main {
         Main main = new Main();
         main.initDatabase();
 //        main.initInterface();
-        printDatabase("Court");
+        printDatabase("Played_Match");
 //        getAllPlayers();
     }
 
@@ -61,7 +61,8 @@ public class Main {
         Connection connection = makeConnection();
 //        initPlayer(connection, "src/People.csv");
 //        initVenues(connection, "src/Venues.csv");
-        initCourts(connection, "src/Courts.csv");
+//        initCourts(connection, "src/Courts.csv");
+        initMatches(connection, "src/Matches.csv");
 //        try {
 //            Statement statement = null;
 //            statement = dbConnection.createStatement();
@@ -272,7 +273,7 @@ public class Main {
             // init Player table
             statement.executeUpdate("DROP TABLE IF EXISTS Played_Match");
             String sql = "CREATE TABLE Played_Match" +
-                    "(id INTEGER not NULL, " +
+                    "(" +
                     "p1_email VARCHAR(50), " +
                     "p2_email VARCHAR(50), " +
                     "p1_games_won INTEGER, " +
@@ -282,24 +283,138 @@ public class Main {
                     "venue_name VARCHAR(50), " +
                     "league_name VARCHAR(50), " +
                     "league_year INTEGER, " +
+                    "id INTEGER not NULL, " +
                     "PRIMARY KEY (id))";
             statement.executeUpdate(sql);
-            System.out.println("Table Played_Match is created ");
+            System.out.println("Table Played_Match is created.");
 
-            sql = "INSERT INTO Played_Match VALUES (?, ?)";
-
+            sql = "INSERT INTO Played_Match VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            int id = 1;
             while((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
+                String p1Email = parts[0];
+                int p1GamesWon = Integer.parseInt(parts[1]);
+                int p2GamesWon = Integer.parseInt(parts[2]);
+                String p2Email = parts[3];
+                String venueName = parts[4];
+                int courtNumber = Integer.parseInt(parts[5]);
 
-
+                String[] dateStr = parts[6].split("/");
+                String dateFormat = "";
+                for(int i = dateStr.length - 1; i >= 0; i--){
+                    dateFormat += dateStr[i];
+                    if(i > 0)
+                        dateFormat += "-";
+                }
+                Date datePlayed = Date.valueOf(dateFormat);
+                int leagueYear = Integer.parseInt(parts[7]);
+                String leagueName = parts[8];
 
                 preparedStatement = connection.prepareStatement(sql);
 
-                preparedStatement.setInt(1, number);
-                preparedStatement.setString(2, venue_name);
+                preparedStatement.setString(1, p1Email);
+                preparedStatement.setString(2, p2Email);
+                preparedStatement.setInt(3, p1GamesWon);
+                preparedStatement.setInt(4, p2GamesWon);
+                preparedStatement.setDate(5, datePlayed);
+                preparedStatement.setInt(6, courtNumber);
+                preparedStatement.setString(7, venueName);
+                preparedStatement.setString(8, leagueName);
+                preparedStatement.setInt(9, leagueYear);
+                preparedStatement.setInt(10, id);
+                id++;
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
 
+            }
+            statement.close();
+            connection.close();
+
+        }
+        catch (IOException | SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void initLeague(Connection connection, String filename){
+        try{
+            FileReader input = new FileReader(filename);
+            BufferedReader br = new BufferedReader(input);
+            String line = br.readLine(); // read the column names
+            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = null;
+
+            // init Player table
+            statement.executeUpdate("DROP TABLE IF EXISTS League");
+            String sql = "CREATE TABLE League" +
+                    "(" +
+                    "name VARCHAR(50) not NULL, " +
+                    "year INTEGER not NULL, " +
+                    "prize_money FLOAT, " +
+                    "winner_email VARCHAR(50), " +
+                    "PRIMARY KEY (name, year))";
+            statement.executeUpdate(sql);
+            System.out.println("Table League is created ");
+
+            sql = "INSERT INTO League VALUES (?, ?, ?, ?)";
+
+            while((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                String name = parts[0];
+                int year = Integer.parseInt(parts[1]);
+                float prizeMoney = Float.parseFloat(parts[2]);
+                String winnerEmail = parts[3];
+
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, name);
+                preparedStatement.setInt(2, year);
+                preparedStatement.setFloat(3, prizeMoney);
+                preparedStatement.setString(4, winnerEmail);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+            }
+            statement.close();
+            connection.close();
+
+        }
+        catch (IOException | SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void initLeaguePlayer(Connection connection, String filename){
+        try{
+            FileReader input = new FileReader(filename);
+            BufferedReader br = new BufferedReader(input);
+            String line = br.readLine(); // read the column names
+            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = null;
+
+            // init Player table
+            statement.executeUpdate("DROP TABLE IF EXISTS League_Player");
+            String sql = "CREATE TABLE League_Player" +
+                    "(" +
+                    "email VARCHAR(50) not NULL, " +
+                    "league_name VARCHAR(50) not NULL, " +
+                    "league_year INTEGER not NULL, " +
+                    "PRIMARY KEY (email, league_name, league_year))";
+            statement.executeUpdate(sql);
+            System.out.println("Table League_Player is created ");
+
+            sql = "INSERT INTO League_Player VALUES (?, ?, ?)";
+
+            while((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                String email = parts[0];
+                String leagueName = parts[1];
+                int leagueYear = Integer.parseInt(parts[2]);
+
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, email);
+                preparedStatement.setString(2, leagueName);
+                preparedStatement.setInt(3, leagueYear);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
             }
             statement.close();
             connection.close();

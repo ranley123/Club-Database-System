@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="club">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/mariadb-java-client-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sqlite-jdbc-3.34.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mysql-connector-java-5.1.47.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
