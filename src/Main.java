@@ -19,7 +19,7 @@ public class Main {
         Main main = new Main();
         main.initDatabase();
 //        main.initInterface();
-        printDatabase("Played_Match");
+        printDatabase("League_Player");
 //        getAllPlayers();
     }
 
@@ -62,7 +62,8 @@ public class Main {
 //        initPlayer(connection, "src/People.csv");
 //        initVenues(connection, "src/Venues.csv");
 //        initCourts(connection, "src/Courts.csv");
-        initMatches(connection, "src/Matches.csv");
+//        initMatches(connection, "src/Matches.csv");
+        initLeague(connection, "src/Leagues.csv");
 //        try {
 //            Statement statement = null;
 //            statement = dbConnection.createStatement();
