@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.sql.Date;
+import java.util.*;
 
 
 public class Main {
@@ -18,10 +18,11 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Database Loading...");
         Main main = new Main();
-        main.initDatabase();
+//        main.initDatabase();
 //        main.initInterface();
 //        printDatabase("League_Player");
-//        getAllPlayers();
+        ArrayList<Player> playerLists = getAllPlayers();
+        System.out.println(playerLists);
     }
 
     private void initInterface() {
@@ -449,9 +450,9 @@ public class Main {
     }
 
 
-    public static ArrayList<Model> getAllPlayers(){
-        ArrayList<Model> playerLists = new ArrayList<>();
-        HashMap<String, Model> map = new HashMap<>();
+    public static ArrayList<Player> getAllPlayers(){
+        ArrayList<Player> playerLists = new ArrayList<>();
+        HashMap<String, Player> map = new HashMap<>();
 
         Connection connection = makeConnection();
         Statement statement = null;
@@ -478,18 +479,52 @@ public class Main {
                 String surname = playerResults.getString("surname");
                 String phoneNumber = playerResults.getString("phone_number");
 
-                Player player = new Player(email, forename, middlename, surname, null, phoneNumber);
-
-                playerLists.add(player);
-
+                if(map.containsKey(email)){
+                    Player player = map.get(email);
+                    player.addPhoneNumber(phoneNumber);
+                }
+                else{
+                    Player player = new Player(email, forename, middlename, surname, null, phoneNumber);
+                    map.put(email, player);
+                }
             }
             playerResults.close();
-
         }
         catch (SQLException e){
             e.printStackTrace();
         }
 
+        for (Map.Entry<String, Player> entry : map.entrySet()){
+            Player player = entry.getValue();
+            playerLists.add(player);
+        }
         return playerLists;
+    }
+
+    public static ArrayList<Player> getAllWonPlayers(){
+        ArrayList<Player> playerList = new ArrayList<>();
+        Connection connection = makeConnection();
+        Statement statement = null;
+
+        try{
+            statement = connection.createStatement();
+            String query ="SELECT\n" +
+                    "Played_Match.email,\n" +
+                    "FROM\n" +
+                    "Played_Match\n" +
+                    "where Player.email = Player_Phone.email;";
+
+            ResultSet playerResults  = statement.executeQuery(query);
+
+            while(playerResults.next()){
+
+            }
+            playerResults.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return playerList;
     }
 }

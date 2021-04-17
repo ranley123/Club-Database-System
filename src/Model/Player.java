@@ -24,7 +24,7 @@ public class Player implements Model{
 
     @Override
     public String toString() {
-        return forename;
+        return forename + " " + phoneNumbers;
     }
 
     @Override
@@ -43,5 +43,9 @@ public class Player implements Model{
     @Override
     public String[] toStringArray() {
         return new String[]{email, forename, middlename, surname, dateOfBirth.toString()};
+    }
+
+    public void addPhoneNumber(String phoneNumber){
+        phoneNumbers.add(phoneNumber);
     }
 }
