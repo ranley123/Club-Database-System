@@ -12,6 +12,17 @@ public class Player implements Model{
     Date dateOfBirth;
     ArrayList<String> phoneNumbers;
 
+    public String getEmail(){return email;}
+    public String getFullName(){
+        String fullName = forename + " ";
+        fullName += middlename + " ";
+        fullName += surname;
+        return fullName;
+    }
+    public String getPhoneNumbers(){
+        return phoneNumbers.toString();
+    }
+
     public Player(String email, String forename, String middlename, String surname, Date dateOfBirth, String phoneNumber){
         this.email = email;
         this.forename = forename;
@@ -41,13 +52,12 @@ public class Player implements Model{
     }
 
 
-
     public void addPhoneNumber(String phoneNumber){
         phoneNumbers.add(phoneNumber);
     }
 
     @Override
     public String[] toStringArray() {
-        return new String[]{email, forename, middlename, surname, dateOfBirth.toString()};
+        return new String[]{getFullName(), email, getPhoneNumbers()};
     }
 }

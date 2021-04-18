@@ -11,20 +11,18 @@ import java.awt.event.*;
 import java.sql.Date;
 import java.util.*;
 
-
 public class Main {
     Connection dbConnection = null;
 
     public static void main(String[] args) {
-        System.out.println("Database Loading...");
         Main main = new Main();
 //        main.initDatabase();
-//        main.initInterface();
-//        printDatabase("League_Player");
+        main.initInterface();
+//        printDatabase("view_win_count");
 //        ArrayList<Player> playerLists = getAllPlayers();
 //        System.out.println(playerLists);
 //        System.out.println(getUnUsedCourt());
-        System.out.println(getAllWonPlayers());
+//        System.out.println(getAllWonPlayers());
     }
 
     private void initInterface() {
@@ -94,6 +92,7 @@ public class Main {
 
             System.out.println("Connecting to Database ...");
             connection = DriverManager.getConnection(dbUrl);
+            System.out.println("Database Connected!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -443,7 +442,7 @@ public class Main {
             ResultSetMetaData rsmd = rs.getMetaData();
 
             while(rs.next()){
-                System.out.println(rs.getString(1));
+                System.out.println(rs.getInt(2));
             }
 
             connection.close();
@@ -453,7 +452,6 @@ public class Main {
         }
 
     }
-
 
     public static ArrayList<Player> getAllPlayers(){
         ArrayList<Player> playerLists = new ArrayList<>();
