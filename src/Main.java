@@ -23,7 +23,8 @@ public class Main {
 //        printDatabase("League_Player");
 //        ArrayList<Player> playerLists = getAllPlayers();
 //        System.out.println(playerLists);
-        System.out.println(getUnUsedCourt());
+//        System.out.println(getUnUsedCourt());
+        System.out.println(getAllWonPlayers());
     }
 
     private void initInterface() {
@@ -519,7 +520,8 @@ public class Main {
                     "LEFT JOIN Played_Match \n" +
                     "ON Court.venue_name = Played_Match.venue_name\n" +
                     "and Court.number = Played_Match.court_number\n" +
-                    "WHERE Played_Match.id is NULL";
+                    "WHERE Played_Match.id is NULL\n" +
+                    "ORDER BY Court.venue_name ASC, Court.number ASC";
             ResultSet resultSet  = statement.executeQuery(query);
             query = "SELECT address FROM Venue\n" +
                     "WHERE name = ?";
@@ -554,30 +556,40 @@ public class Main {
         return res;
     }
 
-    public static ArrayList<Player> getAllWonPlayers(){
-        ArrayList<Player> playerList = new ArrayList<>();
+    public static LinkedHashMap<String, Integer> getAllWonPlayers(){
+        LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
         Connection connection = makeConnection();
         Statement statement = null;
 
         try{
             statement = connection.createStatement();
-            String query ="SELECT\n" +
-                    "Played_Match.email,\n" +
-                    "FROM\n" +
-                    "Played_Match\n" +
-                    "where Player.email = Player_Phone.email;";
+            String query =
+//                    "CREATE VIEW view_win_count AS \n" +
+                    "SELECT Winner.winner_email, COUNT(Winner.id) \n" +
+                    "FROM (SELECT id, \n" +
+                            "(CASE " +
+                            "WHEN p1_games_won > p2_games_won THEN p1_email\n" +
+                            "ELSE p2_email\n" +
+                            "END) AS winner_email FROM Played_Match)\n" +
+                    "Winner\n" +
+                    "GROUP BY Winner.winner_email\n" +
+                    "ORDER BY Winner.winner_email";
 
-            ResultSet playerResults  = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery(query);
 
-            while(playerResults.next()){
-
+            while(resultSet.next()){
+                String curWinner = resultSet.getString(1);
+                int wonTimes = resultSet.getInt(2);
+                map.put(curWinner, wonTimes);
             }
-            playerResults.close();
+            resultSet.close();
+            statement.close();
+            connection.close();
         }
         catch (SQLException e){
             e.printStackTrace();
         }
 
-        return playerList;
+        return map;
     }
 }
