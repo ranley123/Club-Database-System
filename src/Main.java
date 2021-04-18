@@ -12,17 +12,12 @@ import java.sql.Date;
 import java.util.*;
 
 public class Main {
-    Connection dbConnection = null;
-
     public static void main(String[] args) {
         Main main = new Main();
 //        main.initDatabase();
-        main.initInterface();
+//        main.initInterface();
 //        printDatabase("view_win_count");
-//        ArrayList<Player> playerLists = getAllPlayers();
-//        System.out.println(playerLists);
-//        System.out.println(getUnUsedCourt());
-//        System.out.println(getAllWonPlayers());
+        System.out.println(getLeagueMatches("Alexander McLintoch trophy", 2018));
     }
 
     private void initInterface() {
@@ -64,19 +59,9 @@ public class Main {
 //        initPlayer(connection, "src/People.csv");
 //        initVenues(connection, "src/Venues.csv");
 //        initCourts(connection, "src/Courts.csv");
-//        initMatches(connection, "src/Matches.csv");
-//        initLeague(connection, "src/Leagues.csv");
-//        initLeaguePlayer(connection, "src/LeaguePlayer.csv");
-//        try {
-//            Statement statement = null;
-//            statement = dbConnection.createStatement();
-//            statement.executeUpdate("DROP TABLE IF EXISTS club");
-//            statement.executeUpdate("CREATE TABLE club (id int, question VARCHAR(100))");
-//            statement.close();
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//        }
-
+        initMatches(connection, "src/Matches.csv");
+        initLeague(connection, "src/Leagues.csv");
+        initLeaguePlayer(connection, "src/LeaguePlayer.csv");
     }
 
     public static Connection makeConnection() {
@@ -589,5 +574,43 @@ public class Main {
         }
 
         return map;
+    }
+
+    public static ArrayList<Match> getLeagueMatches(String leagueName, int leagueYear){
+        ArrayList<Match> matches = new ArrayList<>();
+        Connection connection = makeConnection();
+        PreparedStatement preparedStatement = null;
+
+        try {
+            String query = "SELECT * FROM Played_Match\n" +
+                    "WHERE Played_Match.league_name = ? AND " +
+                    "Played_Match.league_year = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, leagueName);
+            preparedStatement.setInt(2, leagueYear);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                int id = resultSet.getInt("id");
+                String p1Email = resultSet.getString("p1_email");
+                String p2Email = resultSet.getString("p2_email");
+                // TODO: get name by email
+                int p1GamesWon = resultSet.getInt("p1_games_won");
+                int p2GamesWon = resultSet.getInt("p2_games_won");
+                Date datePlayed = resultSet.getDate("date_played");
+                int courtNumber = resultSet.getInt("court_number");
+                String venueName = resultSet.getString("venue_name");
+
+                Match match = new Match(id, p1Email, p2Email, p1GamesWon, p2GamesWon, datePlayed, courtNumber, venueName);
+                matches.add(match);
+            }
+            preparedStatement.close();
+            resultSet.close();
+            connection.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return matches;
     }
 }
