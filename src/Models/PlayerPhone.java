@@ -1,4 +1,4 @@
-package Model;
+package Models;
 
 public class PlayerPhone implements Model{
     String email;

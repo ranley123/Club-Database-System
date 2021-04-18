@@ -1,4 +1,4 @@
-package Model;
+package Models;
 
 public class LeaguePlayer implements Model{
     String email;

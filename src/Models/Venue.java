@@ -1,4 +1,4 @@
-package Model;
+package Models;
 
 public class Venue implements Model{
     String name;

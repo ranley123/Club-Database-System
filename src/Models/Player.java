@@ -1,4 +1,4 @@
-package Model;
+package Models;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -40,12 +40,14 @@ public class Player implements Model{
         return Objects.hash(email);
     }
 
-    @Override
-    public String[] toStringArray() {
-        return new String[]{email, forename, middlename, surname, dateOfBirth.toString()};
-    }
+
 
     public void addPhoneNumber(String phoneNumber){
         phoneNumbers.add(phoneNumber);
+    }
+
+    @Override
+    public String[] toStringArray() {
+        return new String[]{email, forename, middlename, surname, dateOfBirth.toString()};
     }
 }

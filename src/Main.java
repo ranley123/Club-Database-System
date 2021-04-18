@@ -1,5 +1,5 @@
-import Exceptions.PhoneTypeOutOfDomainException;
-import Model.*;
+import Exceptions.*;
+import Models.*;
 
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -21,8 +21,9 @@ public class Main {
 //        main.initDatabase();
 //        main.initInterface();
 //        printDatabase("League_Player");
-        ArrayList<Player> playerLists = getAllPlayers();
-        System.out.println(playerLists);
+//        ArrayList<Player> playerLists = getAllPlayers();
+//        System.out.println(playerLists);
+        System.out.println(getUnUsedCourt());
     }
 
     private void initInterface() {
@@ -61,7 +62,7 @@ public class Main {
 
     private void initDatabase() {
         Connection connection = makeConnection();
-        initPlayer(connection, "src/People.csv");
+//        initPlayer(connection, "src/People.csv");
 //        initVenues(connection, "src/Venues.csv");
 //        initCourts(connection, "src/Courts.csv");
 //        initMatches(connection, "src/Matches.csv");
@@ -84,8 +85,11 @@ public class Main {
 
         try {
             String dbUrl = "jdbc:sqlite:test";
-            String uname = "hy30";
-            String passwd = ".611MKA73dHitM";
+//            String dbUrl = "jdbc:mariadb://localhost/hy30_db";
+//            String uname = "hy30";
+//            String passwd = ".611MKA73dHitM";
+            String uname = "ranley";
+            String password = "buzhidao";
 
             System.out.println("Connecting to Database ...");
             connection = DriverManager.getConnection(dbUrl);
@@ -499,6 +503,55 @@ public class Main {
             playerLists.add(player);
         }
         return playerLists;
+    }
+
+    public static ArrayList<Court> getUnUsedCourt(){
+        ArrayList<Court> res = new ArrayList<>();
+        Connection connection = makeConnection();
+        Statement statement = null;
+        PreparedStatement preparedStatement = null;
+
+
+        try{
+            statement = connection.createStatement();
+            String query = "SELECT DISTINCT Court.number, Court.venue_name\n" +
+                    "FROM Court \n" +
+                    "LEFT JOIN Played_Match \n" +
+                    "ON Court.venue_name = Played_Match.venue_name\n" +
+                    "and Court.number = Played_Match.court_number\n" +
+                    "WHERE Played_Match.id is NULL";
+            ResultSet resultSet  = statement.executeQuery(query);
+            query = "SELECT address FROM Venue\n" +
+                    "WHERE name = ?";
+            preparedStatement = connection.prepareStatement(query);
+
+            while(resultSet.next()){
+                String venueName = resultSet.getString(2);
+                int courtNumber = resultSet.getInt(1);
+                String venueAddress = "";
+
+                preparedStatement.setString(1, venueName);
+                ResultSet curRes = preparedStatement.executeQuery();
+
+                while(curRes.next()){
+                    venueAddress = curRes.getString(1);
+                }
+                curRes.close();
+
+                Court court = new Court(courtNumber, venueName, venueAddress);
+                res.add(court);
+
+                preparedStatement.clearParameters();
+            }
+            resultSet.close();
+            statement.close();
+            preparedStatement.close();
+            connection.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return res;
     }
 
     public static ArrayList<Player> getAllWonPlayers(){

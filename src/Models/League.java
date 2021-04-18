@@ -1,4 +1,4 @@
-package Model;
+package Models;
 
 public class League implements Model{
     String name;
