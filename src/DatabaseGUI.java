@@ -1,14 +1,12 @@
+import Models.Court;
 import Models.Player;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.xml.crypto.Data;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,7 +19,6 @@ public class DatabaseGUI implements ActionListener{
     private JMenuItem checkAllPlayersItem;
     private JMenuItem checkWonPlayersItem;
     private JMenuItem checkUnusedCourtsItem;
-    private JMenuItem backToMainItem;
 
 
     public DatabaseGUI(){
@@ -37,7 +34,6 @@ public class DatabaseGUI implements ActionListener{
         checkAllPlayersItem = new JMenuItem("Check All Players");
         checkWonPlayersItem = new JMenuItem("Check Won Players");
         checkUnusedCourtsItem = new JMenuItem("Check Unused Courts");
-        backToMainItem = new JMenuItem("Back to Main Page");
         tableData = new DefaultTableModel() {
             public Class<String> getColumnClass(int columnIndex) {
                 return String.class;
@@ -51,7 +47,6 @@ public class DatabaseGUI implements ActionListener{
         popupMenu.add(checkAllPlayersItem);
         popupMenu.add(checkWonPlayersItem);
         popupMenu.add(checkUnusedCourtsItem);
-        popupMenu.add(backToMainItem);
 
         mainFrame.addMouseListener(new MouseAdapter() {
 
@@ -134,6 +129,30 @@ public class DatabaseGUI implements ActionListener{
         }
     }
 
+    private void checkUnusedCourts(){
+        ArrayList<Court> courts = Main.getUnUsedCourt();
+        if(courts.isEmpty()){
+            JOptionPane.showMessageDialog(null, "There is no player won.");
+        }
+        else{
+            String[] columnNames = new String[]{"Court Number", "Venue Name", "Address"};
+            Object[][] data = new Object[courts.size()][columnNames.length];
+
+            for(int i = 0; i < courts.size(); i++){
+                Court court = courts.get(i);
+                int number = court.getNumber();
+                String venueName = court.getVenueName();
+                String venueAddress = court.getVenueAddress();
+                data[i][0] = number;
+                data[i][1] = venueName;
+                data[i][2] = venueAddress;
+            }
+
+            tableData.setDataVector(data, columnNames);
+            table.setModel(tableData);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent event) {
         if(event.getSource() instanceof JMenuItem){
@@ -146,10 +165,7 @@ public class DatabaseGUI implements ActionListener{
                 checkWonPlayers();
             }
             else if (menu == checkUnusedCourtsItem){
-
-            }
-            else if (menu == backToMainItem) {
-
+                checkUnusedCourts();
             }
         }
     }

@@ -11,6 +11,12 @@ public class Court implements Model{
         this.venueAddress = venueAddress;
     }
 
+    public int getNumber(){return number;}
+
+    public String getVenueName(){return venueName;}
+
+    public String getVenueAddress(){return venueAddress;};
+
     @Override
     public String toString(){
         return venueName + " " + number;
