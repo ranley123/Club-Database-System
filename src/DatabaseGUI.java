@@ -1,11 +1,7 @@
-import Models.Court;
-import Models.League;
 import Models.Model;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -100,10 +96,19 @@ public class DatabaseGUI implements ActionListener {
         vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                 .addComponent(searchBtn));
         vGroup.addGap(10);
-
         layout.setVerticalGroup(vGroup);
-
         searchBtn.addActionListener(this);
+
+        JLabel p1EmailLabel = new JLabel("Player 1 Email: ");
+        JLabel p2EmailLabel = new JLabel("Player 2 Email: ");
+        JLabel p1GamesWonLabel = new JLabel("Player 1 Games Won: ");
+        JLabel p2GamesWonLabel = new JLabel("Player 2 Games Won: ");
+        JLabel datePlayedLabel = new JLabel("Date Played: ");
+        JLabel courtNumberLabel = new JLabel("Court Number: ");
+        JLabel venueNameLabel = new JLabel("Venue Name: ");
+        JLabel insertLeagueNameLabel = new JLabel("League Name: ");
+        JLabel insertLeagueYearLabel = new JLabel("League Year: ");
+
 
         popupMenu.add(checkAllPlayersItem);
         popupMenu.add(checkWonPlayersItem);
