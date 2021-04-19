@@ -15,9 +15,9 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main();
 //        main.initDatabase();
-//        main.initInterface();
+        main.initInterface();
 //        printDatabase("view_win_count");
-        System.out.println(getLeagueMatches("Alexander McLintoch trophy", 2018));
+//        System.out.println(getLeagueMatches("Alexander McLintoch trophy", 2018));
     }
 
     private void initInterface() {
@@ -438,8 +438,8 @@ public class Main {
 
     }
 
-    public static ArrayList<Player> getAllPlayers(){
-        ArrayList<Player> playerLists = new ArrayList<>();
+    public static ArrayList<Model> getAllPlayers(){
+        ArrayList<Model> playerLists = new ArrayList<>();
         HashMap<String, Player> map = new HashMap<>();
 
         Connection connection = makeConnection();
@@ -489,8 +489,8 @@ public class Main {
         return playerLists;
     }
 
-    public static ArrayList<Court> getUnUsedCourt(){
-        ArrayList<Court> res = new ArrayList<>();
+    public static ArrayList<Model> getUnUsedCourt(){
+        ArrayList<Model> res = new ArrayList<>();
         Connection connection = makeConnection();
         Statement statement = null;
         PreparedStatement preparedStatement = null;
@@ -576,10 +576,45 @@ public class Main {
         return map;
     }
 
-    public static ArrayList<Match> getLeagueMatches(String leagueName, int leagueYear){
-        ArrayList<Match> matches = new ArrayList<>();
+    public static String getNameByEmail(String email){
         Connection connection = makeConnection();
         PreparedStatement preparedStatement = null;
+        String fullname = "";
+
+        try{
+//            String query = "SELECT CONCAT_WS(\",\",\"Player.forename\",\"Player.middlenames\",\"Player.surname\") " +
+//                    "FROM Player\n" +
+//                    "WHERE Player.email = ?";
+            String query = "SELECT Player.forename,Player.middlenames, Player.surname\n" +
+                    "FROM Player\n" +
+                    "WHERE Player.email = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                String forename = resultSet.getString("forename");
+                String middlename = resultSet.getString("middlenames");
+                String surname = resultSet.getString("surname");
+                fullname = forename + " " + middlename + " " + surname;
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+            connection.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return fullname;
+    }
+
+
+    public static ArrayList<Model> getLeagueMatches(String leagueName, int leagueYear){
+        ArrayList<Model> matches = new ArrayList<>();
+        Connection connection = makeConnection();
+        PreparedStatement preparedStatement = null;
+        HashMap<String, String> emailToNameMap = new HashMap<>();
 
         try {
             String query = "SELECT * FROM Played_Match\n" +
@@ -594,14 +629,29 @@ public class Main {
                 int id = resultSet.getInt("id");
                 String p1Email = resultSet.getString("p1_email");
                 String p2Email = resultSet.getString("p2_email");
-                // TODO: get name by email
+                String p1Name = "";
+                String p2Name = "";
+                if(emailToNameMap.containsKey(p1Email))
+                    p1Name = emailToNameMap.get(p1Email);
+                else{
+                    p1Name = getNameByEmail(p1Email);
+                    emailToNameMap.put(p1Email, p1Name);
+                }
+
+                if(emailToNameMap.containsKey(p2Email))
+                    p2Name = emailToNameMap.get(p2Email);
+                else{
+                    p2Name = getNameByEmail(p2Email);
+                    emailToNameMap.put(p2Email, p2Name);
+                }
+
                 int p1GamesWon = resultSet.getInt("p1_games_won");
                 int p2GamesWon = resultSet.getInt("p2_games_won");
                 Date datePlayed = resultSet.getDate("date_played");
                 int courtNumber = resultSet.getInt("court_number");
                 String venueName = resultSet.getString("venue_name");
 
-                Match match = new Match(id, p1Email, p2Email, p1GamesWon, p2GamesWon, datePlayed, courtNumber, venueName);
+                Match match = new Match(id, p1Name, p2Name, p1GamesWon, p2GamesWon, datePlayed, courtNumber, venueName);
                 matches.add(match);
             }
             preparedStatement.close();
@@ -612,5 +662,85 @@ public class Main {
             e.printStackTrace();
         }
         return matches;
+    }
+
+    public static ArrayList<String> getAllLeagueNames(){
+        ArrayList<String> leagueList = new ArrayList<>();
+        Connection connection = makeConnection();
+        Statement statement = null;
+
+        try{
+            statement = connection.createStatement();
+            String query ="SELECT DISTINCT name FROM League\n";
+            ResultSet resultSet  = statement.executeQuery(query);
+
+            while(resultSet.next()){
+                // Retrieve by column label
+                String leagueName = resultSet.getString("name");
+                leagueList.add(leagueName);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return leagueList;
+    }
+
+    public static ArrayList<Integer> getAllLeagueYearsByName(String name){
+        ArrayList<Integer> leagueList = new ArrayList<>();
+        Connection connection = makeConnection();
+        PreparedStatement preparedStatement = null;
+
+        try{
+            String query ="SELECT DISTINCT year FROM League WHERE name = ?\n";
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet  = preparedStatement.executeQuery(query);
+
+            while(resultSet.next()){
+                // Retrieve by column label
+                int year = Integer.parseInt(resultSet.getString("year"));
+            }
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return leagueList;
+    }
+
+    public static void insertMatch(String p1Email, String p2Email, int p1GamesWon, int p2GamesWon,
+                                   Date datePlayed, int courtNumber, String venueName, String leagueName,
+                                   int leagueYear){
+        Connection connection = makeConnection();
+        PreparedStatement preparedStatement = null;
+        try{
+            String query ="INSERT INTO Played_Match VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n";
+            preparedStatement = connection.prepareStatement(query);
+
+            // TODO generate id
+            int id = 1000;
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, p1Email);
+            preparedStatement.setString(3, p2Email);
+            preparedStatement.setInt(4, p1GamesWon);
+            preparedStatement.setInt(5, p2GamesWon);
+            preparedStatement.setDate(6, datePlayed);
+            preparedStatement.setInt(7, courtNumber);
+            preparedStatement.setString(8, venueName);
+            preparedStatement.setString(9, leagueName);
+            preparedStatement.setInt(10, leagueYear);
+            preparedStatement.executeUpdate();
+
+            connection.close();
+            preparedStatement.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 }

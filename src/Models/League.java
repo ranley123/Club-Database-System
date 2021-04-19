@@ -13,6 +13,10 @@ public class League implements Model{
         this.winnerEmail = winnerEmail;
     }
 
+    public String getName(){return name;}
+
+    public int getYear(){return year;}
+
     @Override
     public String[] toStringArray() {
         return new String[] {name, year + "", prizeMoney + "", winnerEmail};

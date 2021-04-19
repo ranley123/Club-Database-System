@@ -24,7 +24,6 @@ public class Court implements Model{
 
 
     public String[] toStringArray(){
-        String[] stringArrayFormat = {number + "", venueName};
-        return stringArrayFormat;
+        return new String[]{"" + number, venueName, venueAddress};
     }
 }
