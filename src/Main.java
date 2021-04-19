@@ -16,7 +16,8 @@ public class Main {
         Main main = new Main();
 //        main.initDatabase();
         main.initInterface();
-//        printDatabase("view_win_count");
+//        printDatabase("League");
+//        getAllLeagueYearsByName("Alexander McLintoch trophy");
 //        System.out.println(getLeagueMatches("Alexander McLintoch trophy", 2018));
     }
 
@@ -422,12 +423,14 @@ public class Main {
         Connection connection = makeConnection();
         try{
             Statement statement = connection.createStatement();
-            String sql = "SELECT * FROM " + tableName;
-            ResultSet rs = statement.executeQuery(sql);
+            String sql = "SELECT * FROM League WHERE name = ?";
+            PreparedStatement statement1 = connection.prepareStatement(sql);
+            statement1.setString(1, "Alexander McLintoch trophy");
+            ResultSet rs = statement1.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
 
             while(rs.next()){
-                System.out.println(rs.getInt(2));
+                System.out.println(rs.getString(4));
             }
 
             connection.close();
@@ -692,19 +695,17 @@ public class Main {
     public static ArrayList<Integer> getAllLeagueYearsByName(String name){
         ArrayList<Integer> leagueList = new ArrayList<>();
         Connection connection = makeConnection();
-        PreparedStatement preparedStatement = null;
 
         try{
-            String query ="SELECT DISTINCT year FROM League WHERE name = ?\n";
-            preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet  = preparedStatement.executeQuery(query);
+            String sql = "SELECT DISTINCT year FROM League WHERE name = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
 
-            while(resultSet.next()){
-                // Retrieve by column label
-                int year = Integer.parseInt(resultSet.getString("year"));
+            while(rs.next()){
+                leagueList.add(Integer.parseInt(rs.getString(1)));
             }
-            resultSet.close();
-            preparedStatement.close();
+
             connection.close();
         }
         catch (SQLException e){
