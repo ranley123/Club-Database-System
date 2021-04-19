@@ -67,13 +67,13 @@ public class DatabaseGUI implements ActionListener {
         JLabel leagueNameLabel = new JLabel("Select League Name：");
         JLabel leagueYearLabel = new JLabel("Select League Year: ");
         JButton searchBtn = new JButton("Search");
-        JComboBox leagueNameCombo = new JComboBox(leagueNames);
+        leagueNameCombo = new JComboBox(leagueNames);
         ArrayList<Integer> leagueYearList = Main.getAllLeagueYearsByName(leagueNameCombo.getSelectedItem().toString());
         String[] leagueYears = new String[leagueYearList.size()];
         for(int i = 0; i < leagueYears.length; i++){
             leagueYears[i] = leagueYearList.get(i) + "";
         }
-        JComboBox leagueYearCombo = new JComboBox(leagueYears);
+        leagueYearCombo = new JComboBox(leagueYears);
 
         GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
         hGroup.addGap(5);
@@ -102,6 +102,8 @@ public class DatabaseGUI implements ActionListener {
         vGroup.addGap(10);
 
         layout.setVerticalGroup(vGroup);
+
+        searchBtn.addActionListener(this);
 
         popupMenu.add(checkAllPlayersItem);
         popupMenu.add(checkWonPlayersItem);
@@ -142,7 +144,7 @@ public class DatabaseGUI implements ActionListener {
         mainFrame.add(panel, BorderLayout.NORTH);
         mainFrame.add(scrollPane, BorderLayout.SOUTH);
 //
-        mainFrame.setSize(600, 800);
+        mainFrame.setSize(800, 600);
         mainFrame.setVisible(true);
     }
 
@@ -220,7 +222,8 @@ public class DatabaseGUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() instanceof JMenuItem) {
+        Object src = event.getSource();
+        if (src instanceof JMenuItem) {
             //for the popup menu
             JMenuItem menu = (JMenuItem) event.getSource();
             if (menu == checkAllPlayersItem) {
@@ -230,29 +233,16 @@ public class DatabaseGUI implements ActionListener {
             } else if (menu == checkUnusedCourtsItem) {
                 checkUnusedCourts();
             } else if (menu == checkLeagueItem) {
-//                // TODO: add two text fields to input league info
-//                JFrame leagueFrame = new JFrame("Check a League");
-//                ArrayList<String> leagueNameList = Main.getAllLeagueNames();
-//                String[] leagueNames = new String[leagueNameList.size()];
-//
-//                for(int i = 0; i < leagueNames.length; i++){
-//                    leagueNames[i] = leagueNameList.get(i);
-//                }
-//                JComboBox leagueNameCombo = new JComboBox(leagueNames);
-//                JComboBox leagueYearCombo = new JComboBox();
-////                ArrayList<Integer> leagueYears = Main.getAllLeagueYearsByName()
-//
-//                leagueNameCombo.set
-//
-//                leagueFrame.add(leagueNameCombo);
-//                leagueFrame.add(leagueYearCombo);
-//                leagueFrame.setSize(400, 400);
-//                leagueFrame.setVisible(true);
-////                checkLeague("Alexander McLintoch trophy", 2018);
             } else if (menu == addNewMatchItem) {
 
 
             }
+        }
+        else if (src instanceof JButton){
+            String leagueName = leagueNameCombo.getSelectedItem().toString();
+//            System.out.println(leagueYearCombo);
+            int leagueYear = Integer.parseInt(leagueYearCombo.getSelectedItem().toString());
+            checkLeague(leagueName, leagueYear);
         }
     }
 
