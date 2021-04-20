@@ -758,6 +758,7 @@ public class Main {
                     " venue_name, league_name, league_year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(query);
 
+            // TODO: error string and exceptions
             preparedStatement.setString(1, p1Email);
             preparedStatement.setString(2, p2Email);
             preparedStatement.setInt(3, p1GamesWon);
@@ -799,5 +800,33 @@ public class Main {
         catch (SQLException e){
             e.printStackTrace();
         }
+    }
+
+    // TODO: new view to rank players based on their prize money
+    public static ArrayList<String> rankPlayers(){
+        Connection connection = null;
+        Statement statement = null;
+        ArrayList<String> players = new ArrayList<>();
+
+        try{
+            connection = makeConnection();
+            statement = connection.createStatement();
+            String query = "SELECT Player.email FROM Player, League \n" +
+                    "WHERE Player.email = League.winner_email\n" +
+                    "ORDER BY League.prize_money DESC";
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while(resultSet.next()){
+                players.add(resultSet.getString(1));
+            }
+
+            connection.close();
+            statement.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return players;
     }
 }

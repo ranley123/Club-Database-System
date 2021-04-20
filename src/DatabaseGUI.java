@@ -20,7 +20,8 @@ public class DatabaseGUI implements ActionListener {
     private JMenuItem checkAllPlayersItem;
     private JMenuItem checkWonPlayersItem;
     private JMenuItem checkUnusedCourtsItem;
-    private JMenuItem checkLeagueItem;
+    private JMenuItem checkRankPlayersItem;
+
     private JMenuItem addNewMatchItem;
     private JComboBox leagueNameCombo;
     private JComboBox leagueYearCombo;
@@ -48,7 +49,7 @@ public class DatabaseGUI implements ActionListener {
         checkAllPlayersItem = new JMenuItem("Check All Players");
         checkWonPlayersItem = new JMenuItem("Check Won Players");
         checkUnusedCourtsItem = new JMenuItem("Check Unused Courts");
-        checkLeagueItem = new JMenuItem("Check League's Matches");
+        checkRankPlayersItem = new JMenuItem("Check Player Ranking");
         addNewMatchItem = new JMenuItem("Add a New Match");
 
         tableData = new DefaultTableModel() {
@@ -197,7 +198,7 @@ public class DatabaseGUI implements ActionListener {
         popupMenu.add(checkAllPlayersItem);
         popupMenu.add(checkWonPlayersItem);
         popupMenu.add(checkUnusedCourtsItem);
-        popupMenu.add(checkLeagueItem);
+        popupMenu.add(checkRankPlayersItem);
         popupMenu.add(addNewMatchItem);
 
         mainFrame.addMouseListener(new MouseAdapter() {
@@ -223,7 +224,7 @@ public class DatabaseGUI implements ActionListener {
         checkAllPlayersItem.addActionListener(this);
         checkWonPlayersItem.addActionListener(this);
         checkUnusedCourtsItem.addActionListener(this);
-        checkLeagueItem.addActionListener(this);
+        checkRankPlayersItem.addActionListener(this);
         addNewMatchItem.addActionListener(this);
 
         table.setComponentPopupMenu(popupMenu);
@@ -296,6 +297,18 @@ public class DatabaseGUI implements ActionListener {
         }
     }
 
+    private void checkRankingPlayers(){
+        ArrayList<String> players = Main.rankPlayers();
+        if (players.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "There is no player won.");
+        } else {
+//            String[] columnNames = new String[]{"Email, Prize Money"};
+//            Object[][] data = convertToTableData(players, columnNames);
+//            tableData.setDataVector(data, columnNames);
+//            table.setModel(tableData);
+        }
+    }
+
     private Object[][] convertToTableData(ArrayList<Model> dataList, String[] columnNames) {
         Object[][] data = new Object[dataList.size()][columnNames.length];
         for (int i = 0; i < dataList.size(); i++) {
@@ -321,7 +334,8 @@ public class DatabaseGUI implements ActionListener {
                 checkWonPlayers();
             } else if (menu == checkUnusedCourtsItem) {
                 checkUnusedCourts();
-            } else if (menu == checkLeagueItem) {
+            } else if (menu == checkRankPlayersItem) {
+                checkRankingPlayers();
             } else if (menu == addNewMatchItem) {
 
 
