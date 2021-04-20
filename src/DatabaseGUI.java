@@ -1,9 +1,11 @@
 import Models.Model;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,6 +24,15 @@ public class DatabaseGUI implements ActionListener {
     private JMenuItem addNewMatchItem;
     private JComboBox leagueNameCombo;
     private JComboBox leagueYearCombo;
+    JTextField p1EmailTf;
+    JTextField p2EmailTf;
+    JTextField p1GamesWonTf;
+    JTextField p2GamesWonTf;
+    JTextField datePlayedTf;
+    JTextField courtNumberTf;
+    JTextField venueNameTf;
+    JTextField leagueNameTf;
+    JTextField leagueYearTf;
 
 
     public DatabaseGUI() {
@@ -62,43 +73,6 @@ public class DatabaseGUI implements ActionListener {
 
         JLabel leagueNameLabel = new JLabel("Select League Name：");
         JLabel leagueYearLabel = new JLabel("Select League Year: ");
-        JButton searchBtn = new JButton("Search");
-        leagueNameCombo = new JComboBox(leagueNames);
-        ArrayList<Integer> leagueYearList = Main.getAllLeagueYearsByName(leagueNameCombo.getSelectedItem().toString());
-        String[] leagueYears = new String[leagueYearList.size()];
-        for(int i = 0; i < leagueYears.length; i++){
-            leagueYears[i] = leagueYearList.get(i) + "";
-        }
-        leagueYearCombo = new JComboBox(leagueYears);
-
-        GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-        hGroup.addGap(5);
-        hGroup.addGroup(layout.createParallelGroup().addComponent(leagueNameLabel)
-                .addComponent(leagueYearLabel));
-        hGroup.addGap(5);
-        hGroup.addGroup(layout.createParallelGroup()
-                .addComponent(leagueYearCombo)
-                .addComponent(leagueNameCombo)
-                .addComponent(searchBtn));
-        hGroup.addGap(5);
-        layout.setHorizontalGroup(hGroup);
-
-        GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-        vGroup.addGap(10);
-        vGroup.addGroup(layout.createParallelGroup());
-        vGroup.addGap(10);
-        vGroup.addGroup(layout.createParallelGroup().addComponent(leagueNameLabel)
-                .addComponent(leagueNameCombo));
-        vGroup.addGap(5);
-        vGroup.addGroup(layout.createParallelGroup().addComponent(leagueYearLabel)
-                .addComponent(leagueYearCombo));
-        vGroup.addGap(10);
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                .addComponent(searchBtn));
-        vGroup.addGap(10);
-        layout.setVerticalGroup(vGroup);
-        searchBtn.addActionListener(this);
-
         JLabel p1EmailLabel = new JLabel("Player 1 Email: ");
         JLabel p2EmailLabel = new JLabel("Player 2 Email: ");
         JLabel p1GamesWonLabel = new JLabel("Player 1 Games Won: ");
@@ -108,7 +82,117 @@ public class DatabaseGUI implements ActionListener {
         JLabel venueNameLabel = new JLabel("Venue Name: ");
         JLabel insertLeagueNameLabel = new JLabel("League Name: ");
         JLabel insertLeagueYearLabel = new JLabel("League Year: ");
+        p1EmailTf = new JTextField();
+        p2EmailTf = new JTextField();
+        p1GamesWonTf = new JTextField();
+        p2GamesWonTf = new JTextField();
+        datePlayedTf = new JTextField();
+        courtNumberTf = new JTextField();
+        venueNameTf = new JTextField();
+        leagueNameTf = new JTextField();
+        leagueYearTf = new JTextField();
 
+        JButton searchBtn = new JButton("Search");
+        JButton insertBtn = new JButton("Insert Match");
+        leagueNameCombo = new JComboBox(leagueNames);
+        ArrayList<Integer> leagueYearList = Main.getAllLeagueYearsByName(leagueNameCombo.getSelectedItem().toString());
+        String[] leagueYears = new String[leagueYearList.size()];
+        for (int i = 0; i < leagueYears.length; i++) {
+            leagueYears[i] = leagueYearList.get(i) + "";
+        }
+        leagueYearCombo = new JComboBox(leagueYears);
+
+        GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
+        hGroup.addGap(5);
+        hGroup.addGroup(layout.createParallelGroup()
+                .addComponent(leagueNameLabel)
+                .addComponent(leagueYearLabel)
+                .addComponent(p1EmailLabel)
+                .addComponent(p2EmailLabel)
+                .addComponent(p1GamesWonLabel)
+                .addComponent(p2GamesWonLabel)
+                .addComponent(datePlayedLabel)
+                .addComponent(courtNumberLabel)
+                .addComponent(venueNameLabel)
+                .addComponent(insertLeagueNameLabel)
+                .addComponent(insertLeagueYearLabel)
+        );
+        hGroup.addGap(5);
+        hGroup.addGroup(layout.createParallelGroup()
+                .addComponent(leagueYearCombo)
+                .addComponent(leagueNameCombo)
+                .addComponent(searchBtn)
+                .addComponent(p1EmailTf)
+                .addComponent(p2EmailTf)
+                .addComponent(p1GamesWonTf)
+                .addComponent(p2GamesWonTf)
+                .addComponent(datePlayedTf)
+                .addComponent(courtNumberTf)
+                .addComponent(venueNameTf)
+                .addComponent(leagueNameTf)
+                .addComponent(leagueYearTf)
+                .addComponent(insertBtn)
+        );
+        hGroup.addGap(5);
+        layout.setHorizontalGroup(hGroup);
+
+        GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+        vGroup.addGap(10);
+        vGroup.addGroup(layout.createParallelGroup());
+        vGroup.addGap(10);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(leagueNameLabel)
+                .addComponent(leagueNameCombo));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(leagueYearLabel)
+                .addComponent(leagueYearCombo));
+        vGroup.addGap(10);
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                .addComponent(searchBtn));
+        vGroup.addGap(10);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(p1EmailLabel)
+                .addComponent(p1EmailTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(p2EmailLabel)
+                .addComponent(p2EmailTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(p1GamesWonLabel)
+                .addComponent(p1GamesWonTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(p2GamesWonLabel)
+                .addComponent(p2GamesWonTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(datePlayedLabel)
+                .addComponent(datePlayedTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(courtNumberLabel)
+                .addComponent(courtNumberTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(venueNameLabel)
+                .addComponent(venueNameTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(insertLeagueNameLabel)
+                .addComponent(leagueNameTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup()
+                .addComponent(insertLeagueYearLabel)
+                .addComponent(leagueYearTf));
+        vGroup.addGap(5);
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                .addComponent(insertBtn));
+
+        layout.setVerticalGroup(vGroup);
+        searchBtn.addActionListener(this);
+        insertBtn.addActionListener(this);
 
         popupMenu.add(checkAllPlayersItem);
         popupMenu.add(checkWonPlayersItem);
@@ -242,12 +326,34 @@ public class DatabaseGUI implements ActionListener {
 
 
             }
-        }
-        else if (src instanceof JButton){
-            String leagueName = leagueNameCombo.getSelectedItem().toString();
-//            System.out.println(leagueYearCombo);
-            int leagueYear = Integer.parseInt(leagueYearCombo.getSelectedItem().toString());
-            checkLeague(leagueName, leagueYear);
+        } else if (src instanceof JButton) {
+            if (((JButton) src).getText().compareTo("Search") == 0) {
+                String leagueName = leagueNameCombo.getSelectedItem().toString();
+                int leagueYear = Integer.parseInt(leagueYearCombo.getSelectedItem().toString());
+                checkLeague(leagueName, leagueYear);
+            } else {
+                String p1Email = p1EmailTf.getText();
+                String p2Email = p1EmailTf.getText();
+                int p1GamesWon = Integer.parseInt(p1GamesWonTf.getText());
+                int p2GamesWon = Integer.parseInt(p2GamesWonTf.getText());
+                Date datePlayed = Date.valueOf(datePlayedTf.getText());
+                int courtNumber = Integer.parseInt(courtNumberTf.getText());
+                String venueName = venueNameTf.getText();
+                String leagueName = leagueNameTf.getText();
+                int leagueYear = Integer.parseInt(leagueYearTf.getText());
+
+                p1Email = "ranley0109@gmail.com";
+                p2Email = "yuhuan0109@gmail.com";
+                p1GamesWon = 1;
+                p2GamesWon = 3;
+                datePlayed = Date.valueOf("2020-01-09");
+                courtNumber = 1;
+                venueName = "University Sports Centre";
+                leagueName = "Alexander McLintoch trophy";
+                leagueYear = 2020;
+
+                Main.insertMatch(p1Email, p2Email, p1GamesWon, p2GamesWon, datePlayed, courtNumber, venueName, leagueName, leagueYear);
+            }
         }
     }
 

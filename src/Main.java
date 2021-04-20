@@ -57,21 +57,21 @@ public class Main {
 
     private void initDatabase() {
         Connection connection = makeConnection();
-//        initPlayer(connection, "src/People.csv");
-//        initVenues(connection, "src/Venues.csv");
-//        initCourts(connection, "src/Courts.csv");
-        initMatches(connection, "src/Matches.csv");
-        initLeague(connection, "src/Leagues.csv");
-        initLeaguePlayer(connection, "src/LeaguePlayer.csv");
+        initPlayer("src/People.csv");
+        initVenues("src/Venues.csv");
+        initCourts("src/Courts.csv");
+        initMatches("src/Matches.csv");
+        initLeague("src/Leagues.csv");
+        initLeaguePlayer("src/LeaguePlayer.csv");
     }
 
     public static Connection makeConnection() {
         Connection connection = null;
 
         try {
-            String dbUrl = "jdbc:sqlite:test";
-//            String dbUrl = "jdbc:mariadb://localhost/hy30_db";
-//            String uname = "hy30";
+//            String dbUrl = "jdbc:sqlite:test";
+            String dbUrl = "jdbc:mariadb://localhost/hy30_db";
+//            String uname = "hy30";mysqld_safe --skip-grant-tables &
 //            String passwd = ".611MKA73dHitM";
             String uname = "ranley";
             String password = "buzhidao";
@@ -85,8 +85,10 @@ public class Main {
         return connection;
     }
 
-    public static void initPlayer(Connection connection, String filename){
+    public static void initPlayer(String filename){
         try{
+            Connection connection = makeConnection();
+
             FileReader input = new FileReader(filename);
             BufferedReader br = new BufferedReader(input);
             String line = br.readLine(); // read the column names
@@ -175,8 +177,9 @@ public class Main {
         }
     }
 
-    public static void initVenues(Connection connection, String filename){
+    public static void initVenues(String filename){
         try{
+            Connection connection = makeConnection();
             FileReader input = new FileReader(filename);
             BufferedReader br = new BufferedReader(input);
             String line = br.readLine(); // read the column names
@@ -216,8 +219,9 @@ public class Main {
         }
     }
 
-    public static void initCourts(Connection connection, String filename){
+    public static void initCourts(String filename){
         try{
+            Connection connection = makeConnection();
             FileReader input = new FileReader(filename);
             BufferedReader br = new BufferedReader(input);
             String line = br.readLine(); // read the column names
@@ -256,8 +260,10 @@ public class Main {
         }
     }
 
-    public static void initMatches(Connection connection, String filename){
+    public static void initMatches(String filename){
         try{
+            Connection connection = makeConnection();
+
             FileReader input = new FileReader(filename);
             BufferedReader br = new BufferedReader(input);
             String line = br.readLine(); // read the column names
@@ -330,8 +336,10 @@ public class Main {
         }
     }
 
-    public static void initLeague(Connection connection, String filename){
+    public static void initLeague(String filename){
         try{
+            Connection connection = makeConnection();
+
             FileReader input = new FileReader(filename);
             BufferedReader br = new BufferedReader(input);
             String line = br.readLine(); // read the column names
@@ -376,8 +384,10 @@ public class Main {
         }
     }
 
-    public static void initLeaguePlayer(Connection connection, String filename){
+    public static void initLeaguePlayer(String filename){
         try{
+            Connection connection = makeConnection();
+
             FileReader input = new FileReader(filename);
             BufferedReader br = new BufferedReader(input);
             String line = br.readLine(); // read the column names
@@ -725,16 +735,16 @@ public class Main {
 
             // TODO generate id
             int id = 1000;
-            preparedStatement.setInt(1, id);
-            preparedStatement.setString(2, p1Email);
-            preparedStatement.setString(3, p2Email);
-            preparedStatement.setInt(4, p1GamesWon);
-            preparedStatement.setInt(5, p2GamesWon);
-            preparedStatement.setDate(6, datePlayed);
-            preparedStatement.setInt(7, courtNumber);
-            preparedStatement.setString(8, venueName);
-            preparedStatement.setString(9, leagueName);
-            preparedStatement.setInt(10, leagueYear);
+            preparedStatement.setString(1, p1Email);
+            preparedStatement.setString(2, p2Email);
+            preparedStatement.setInt(3, p1GamesWon);
+            preparedStatement.setInt(4, p2GamesWon);
+            preparedStatement.setDate(5, datePlayed);
+            preparedStatement.setInt(6, courtNumber);
+            preparedStatement.setString(7, venueName);
+            preparedStatement.setString(8, leagueName);
+            preparedStatement.setInt(9, leagueYear);
+            preparedStatement.setInt(10, id);
             preparedStatement.executeUpdate();
 
             connection.close();
