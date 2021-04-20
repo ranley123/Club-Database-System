@@ -14,8 +14,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Main main = new Main();
-//        main.initDatabase();
-        main.initInterface();
+        main.initDatabase();
+//        main.initInterface();
 //        printDatabase("League");
 //        getAllLeagueYearsByName("Alexander McLintoch trophy");
 //        System.out.println(getLeagueMatches("Alexander McLintoch trophy", 2018));
@@ -58,11 +58,11 @@ public class Main {
     private void initDatabase() {
         Connection connection = makeConnection();
         initPlayer("src/People.csv");
-        initVenues("src/Venues.csv");
-        initCourts("src/Courts.csv");
-        initMatches("src/Matches.csv");
-        initLeague("src/Leagues.csv");
-        initLeaguePlayer("src/LeaguePlayer.csv");
+//        initVenues("src/Venues.csv");
+//        initCourts("src/Courts.csv");
+//        initMatches("src/Matches.csv");
+//        initLeague("src/Leagues.csv");
+//        initLeaguePlayer("src/LeaguePlayer.csv");
     }
 
     public static Connection makeConnection() {
@@ -109,11 +109,13 @@ public class Main {
 
             // init Player_Phone table
             statement.executeUpdate("DROP TABLE IF EXISTS Player_Phone");
-            sql = "CREATE TABLE Player_Phone"
-                    + "(email VARCHAR(50) not NULL, "
-                    + "phone_number VARCHAR(20), "
-                    + "phone_type VARCHAR(10), "
-                    + "PRIMARY KEY (email, phone_number))";
+            sql = "CREATE TABLE Player_Phone" +
+                    "(email VARCHAR(50) not NULL, " +
+                    "phone_number VARCHAR(20), " +
+                    "phone_type VARCHAR(10), " +
+                    "CONSTRAINT phone_types \n" +
+                    "CHECK (phone_type in (\"work\", \"home\", \"mobile\")), " +
+                    "PRIMARY KEY (email, phone_number))";
             statement.executeUpdate(sql);
             System.out.println("Table Player_Phone is created ");
 
@@ -156,11 +158,6 @@ public class Main {
                     String phoneType = curPhone.substring(index, curPhone.length());
                     phoneType = phoneType.trim();
 
-                    // need to add more to handle issues
-
-                    if(phoneType.compareTo("home") != 0 && phoneType.compareTo("mobile") != 0 && phoneType.compareTo("work") != 0)
-                        throw new PhoneTypeOutOfDomainException(phoneType);
-
                     preparedStatement = connection.prepareStatement(newsql);
                     preparedStatement.setString(1, email);
                     preparedStatement.setString(2, phoneNumber);
@@ -172,7 +169,7 @@ public class Main {
 
             statement.close();
         }
-        catch (IOException | SQLException | PhoneTypeOutOfDomainException e){
+        catch (IOException | SQLException e){
             e.printStackTrace();
         }
     }
