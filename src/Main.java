@@ -57,10 +57,10 @@ public class Main {
 
     private void initDatabase() {
         Connection connection = makeConnection();
-        initPlayer("src/People.csv");
+//        initPlayer("src/People.csv");
 //        initVenues("src/Venues.csv");
 //        initCourts("src/Courts.csv");
-//        initMatches("src/Matches.csv");
+        initMatches("src/Matches.csv");
 //        initLeague("src/Leagues.csv");
 //        initLeaguePlayer("src/LeaguePlayer.csv");
     }
@@ -111,6 +111,9 @@ public class Main {
             statement.executeUpdate("DROP TABLE IF EXISTS Player_Phone");
             sql = "CREATE TABLE Player_Phone" +
                     "(email VARCHAR(50) not NULL, " +
+                    "CONSTRAINT valid_email " +
+                    "CHECK (email not like \"@%\" AND email not like \"%@\"" +
+                        " AND email like \"%@%\"), " +
                     "phone_number VARCHAR(20), " +
                     "phone_type VARCHAR(10), " +
                     "CONSTRAINT phone_types \n" +
@@ -273,9 +276,16 @@ public class Main {
                     "(" +
                     "p1_email VARCHAR(50), " +
                     "p2_email VARCHAR(50), " +
+//                    "CONSTRAINT valid_players " +
+//                        "CHECK ()" +
                     "p1_games_won INTEGER, " +
-                    "p2_games_won INTEGER," +
+                    "p2_games_won INTEGER, " +
+                    "CONSTRAINT valid_games " +
+                        "CHECK ((p1_games_won = 3 AND p2_games_won >= 0 AND p2_games_won < 3) " +
+                        "OR (p2_games_won = 3 AND p1_games_won >= 0 AND p1_games_won < 3)), " +
                     "date_played DATE, " +
+                    "CONSTRAINT valid_year " +
+                        "CHECK (year(date_played) = league_year), " +
                     "court_number INTEGER, " +
                     "venue_name VARCHAR(50), " +
                     "league_name VARCHAR(50), " +
