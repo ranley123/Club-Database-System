@@ -14,7 +14,7 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Main main = new Main();
-        main.initDatabase();
+//        main.initDatabase();
 //        main.initInterface();
 //        printDatabase("League");
 //        getAllLeagueYearsByName("Alexander McLintoch trophy");
@@ -58,11 +58,12 @@ public class Main {
     private void initDatabase() {
         Connection connection = makeConnection();
 //        initPlayer("src/People.csv");
-//        initVenues("src/Venues.csv");
-//        initCourts("src/Courts.csv");
-//        initLeague("src/Leagues.csv");
-//        initLeaguePlayer("src/LeaguePlayer.csv");
+        initVenues("src/Venues.csv");
+        initCourts("src/Courts.csv");
+        initLeague("src/Leagues.csv");
+        initLeaguePlayer("src/LeaguePlayer.csv");
         initMatches("src/Matches.csv");
+//        addProcAddVenue("New Club", "North Street", 3);
     }
 
     public static Connection makeConnection() {
@@ -77,7 +78,7 @@ public class Main {
             String password = "buzhidao";
 
             System.out.println("Connecting to Database ...");
-            connection = DriverManager.getConnection(dbUrl);
+            connection = DriverManager.getConnection(dbUrl, "root", "buzhidao");
             System.out.println("Database Connected!");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,14 +113,15 @@ public class Main {
             sql = "CREATE TABLE Player_Phone" +
                     "(email VARCHAR(50) not NULL, " +
                     "CONSTRAINT valid_email " +
-                    "CHECK (email not like \"@%\" AND email not like \"%@\"" +
+                    "CHECK (email not like \"@%\" AND email not like \"%@\" " +
                         " AND email like \"%@%\"), " +
                     "phone_number VARCHAR(20), " +
                     "phone_type VARCHAR(10), " +
                     "CONSTRAINT phone_types \n" +
                     "CHECK (phone_type in (\"work\", \"home\", \"mobile\")), " +
                     "PRIMARY KEY (email, phone_number), " +
-                    "FOREIGN KEY (email) REFERENCES Player(email))";
+                    "FOREIGN KEY (email) REFERENCES Player(email)" +
+                    ")";
             statement.executeUpdate(sql);
             System.out.println("Table Player_Phone is created ");
 
@@ -770,6 +772,25 @@ public class Main {
 
             connection.close();
             preparedStatement.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void addProcAddVenue(String venueName, String venueAddress, int maxCourt){
+        Connection connection = makeConnection();
+        try{
+            Statement statement = connection.createStatement();
+            String query = "DELIMETER // " +
+                    "CREATE PROCEDURE proc_add_venue (IN venue_name VARCHAR(50), IN venue_address VARCHAR(50), IN max_court INT)\n" +
+                    "BEGIN" +
+                        "INSERT INTO Venue VALUES(venue_name, venue_address); " +
+                    "END" +
+                    "// DELIMETER ;"
+                    ;
+            statement.executeUpdate(query);
+            connection.close();
         }
         catch (SQLException e){
             e.printStackTrace();
