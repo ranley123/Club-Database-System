@@ -14,11 +14,11 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Main main = new Main();
-//        main.initDatabase();
+        main.initDatabase();
 //        main.initInterface();
 //        printDatabase("League");
 //        getAllLeagueYearsByName("Alexander McLintoch trophy");
-//        System.out.println(getLeagueMatches("Alexander McLintoch trophy", 2018));
+//        addProcAddVenue();
     }
 
     private void initInterface() {
@@ -58,10 +58,10 @@ public class Main {
     private void initDatabase() {
         Connection connection = makeConnection();
 //        initPlayer("src/People.csv");
-        initVenues("src/Venues.csv");
-        initCourts("src/Courts.csv");
-        initLeague("src/Leagues.csv");
-        initLeaguePlayer("src/LeaguePlayer.csv");
+//        initVenues("src/Venues.csv");
+//        initCourts("src/Courts.csv");
+//        initLeague("src/Leagues.csv");
+//        initLeaguePlayer("src/LeaguePlayer.csv");
         initMatches("src/Matches.csv");
 //        addProcAddVenue("New Club", "North Street", 3);
     }
@@ -293,7 +293,7 @@ public class Main {
                     "venue_name VARCHAR(50), " +
                     "league_name VARCHAR(50), " +
                     "league_year INTEGER, " +
-                    "id INTEGER not NULL, " +
+                    "id INTEGER not NULL AUTO_INCREMENT, " +
                     "PRIMARY KEY (id), " +
                     "FOREIGN KEY (p1_email) REFERENCES Player(email), " +
                     "FOREIGN KEY (p2_email) REFERENCES Player(email), " +
@@ -306,8 +306,9 @@ public class Main {
             statement.executeUpdate(sql);
             System.out.println("Table Played_Match is created.");
 
-            sql = "INSERT INTO Played_Match VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            int id = 1;
+            sql = "INSERT INTO Played_Match (p1_email, p2_email, p1_games_won, p2_games_won, date_played, court_number," +
+                    " venue_name, league_name, league_year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//            int id = 1;
             while((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
                 String p1Email = parts[0];
@@ -339,8 +340,8 @@ public class Main {
                 preparedStatement.setString(7, venueName);
                 preparedStatement.setString(8, leagueName);
                 preparedStatement.setInt(9, leagueYear);
-                preparedStatement.setInt(10, id);
-                id++;
+//                preparedStatement.setInt(10, id);
+//                id++;
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
 
@@ -753,11 +754,10 @@ public class Main {
         Connection connection = makeConnection();
         PreparedStatement preparedStatement = null;
         try{
-            String query ="INSERT INTO Played_Match VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n";
+            String query = "INSERT INTO Played_Match (p1_email, p2_email, p1_games_won, p2_games_won, date_played, court_number," +
+                    " venue_name, league_name, league_year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(query);
 
-            // TODO generate id
-            int id = 1000;
             preparedStatement.setString(1, p1Email);
             preparedStatement.setString(2, p2Email);
             preparedStatement.setInt(3, p1GamesWon);
@@ -767,7 +767,6 @@ public class Main {
             preparedStatement.setString(7, venueName);
             preparedStatement.setString(8, leagueName);
             preparedStatement.setInt(9, leagueYear);
-            preparedStatement.setInt(10, id);
             preparedStatement.executeUpdate();
 
             connection.close();
@@ -778,16 +777,21 @@ public class Main {
         }
     }
 
-    public static void addProcAddVenue(String venueName, String venueAddress, int maxCourt){
+    public static void addProcAddVenue(){
         Connection connection = makeConnection();
         try{
             Statement statement = connection.createStatement();
-            String query = "DELIMETER // " +
+            String query = "DELIMITER // " +
                     "CREATE PROCEDURE proc_add_venue (IN venue_name VARCHAR(50), IN venue_address VARCHAR(50), IN max_court INT)\n" +
-                    "BEGIN" +
-                        "INSERT INTO Venue VALUES(venue_name, venue_address); " +
-                    "END" +
-                    "// DELIMETER ;"
+                    "BEGIN\n" +
+                    "START TRANSACTION;\n" +
+                        "INSERT INTO Venue VALUES(venue_name, venue_address);\n" +
+                        "FOR i in 1..max_court\n" +
+                        "DO INSERT INTO Court VALUES (i, venue_name)\n" +
+                        "END FOR;\n" +
+                    "COMMIT;\n" +
+                    "END;\n" +
+                    "// DELIMITER ;"
                     ;
             statement.executeUpdate(query);
             connection.close();
