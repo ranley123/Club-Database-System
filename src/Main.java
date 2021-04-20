@@ -60,9 +60,9 @@ public class Main {
 //        initPlayer("src/People.csv");
 //        initVenues("src/Venues.csv");
 //        initCourts("src/Courts.csv");
-        initMatches("src/Matches.csv");
 //        initLeague("src/Leagues.csv");
 //        initLeaguePlayer("src/LeaguePlayer.csv");
+        initMatches("src/Matches.csv");
     }
 
     public static Connection makeConnection() {
@@ -118,7 +118,8 @@ public class Main {
                     "phone_type VARCHAR(10), " +
                     "CONSTRAINT phone_types \n" +
                     "CHECK (phone_type in (\"work\", \"home\", \"mobile\")), " +
-                    "PRIMARY KEY (email, phone_number))";
+                    "PRIMARY KEY (email, phone_number), " +
+                    "FOREIGN KEY (email) REFERENCES Player(email))";
             statement.executeUpdate(sql);
             System.out.println("Table Player_Phone is created ");
 
@@ -191,7 +192,7 @@ public class Main {
             String sql = "CREATE TABLE Venue"
                     + "(name VARCHAR(50) not NULL, "
                     + "address VARCHAR(50), "
-                    + " PRIMARY KEY (name))";
+                    + "PRIMARY KEY (name))";
             statement.executeUpdate(sql);
             System.out.println("Table Venue is created ");
 
@@ -233,7 +234,9 @@ public class Main {
             String sql = "CREATE TABLE Court"
                     + "(number INTEGER not NULL, "
                     + "venue_name VARCHAR(50) not NULL, "
-                    + "PRIMARY KEY (number, venue_name))";
+                    + "PRIMARY KEY (number, venue_name), " +
+                    "FOREIGN KEY (venue_name) REFERENCES Venue(name)" +
+                    ")";
             statement.executeUpdate(sql);
             System.out.println("Table Court is created ");
 
@@ -276,8 +279,6 @@ public class Main {
                     "(" +
                     "p1_email VARCHAR(50), " +
                     "p2_email VARCHAR(50), " +
-//                    "CONSTRAINT valid_players " +
-//                        "CHECK ()" +
                     "p1_games_won INTEGER, " +
                     "p2_games_won INTEGER, " +
                     "CONSTRAINT valid_games " +
@@ -291,7 +292,15 @@ public class Main {
                     "league_name VARCHAR(50), " +
                     "league_year INTEGER, " +
                     "id INTEGER not NULL, " +
-                    "PRIMARY KEY (id))";
+                    "PRIMARY KEY (id), " +
+                    "FOREIGN KEY (p1_email) REFERENCES Player(email), " +
+                    "FOREIGN KEY (p2_email) REFERENCES Player(email), " +
+                    "FOREIGN KEY (venue_name) REFERENCES Venue(name), " +
+                    "FOREIGN KEY (p1_email) REFERENCES Player(email), " +
+                    "FOREIGN KEY (court_number, venue_name) REFERENCES Court(number, venue_name), " +
+                    "FOREIGN KEY (league_name, league_year) REFERENCES League(name, year), " +
+                    "FOREIGN KEY (p1_email, league_name, league_year) REFERENCES League_Player(email, league_name, league_year)" +
+                    ")";
             statement.executeUpdate(sql);
             System.out.println("Table Played_Match is created.");
 
@@ -361,7 +370,9 @@ public class Main {
                     "year INTEGER not NULL, " +
                     "prize_money FLOAT, " +
                     "winner_email VARCHAR(50), " +
-                    "PRIMARY KEY (name, year))";
+                    "PRIMARY KEY (name, year), " +
+                    "FOREIGN KEY (winner_email) REFERENCES Player(email)" +
+                    ")";
             statement.executeUpdate(sql);
             System.out.println("Table League is created ");
 
@@ -408,7 +419,10 @@ public class Main {
                     "email VARCHAR(50) not NULL, " +
                     "league_name VARCHAR(50) not NULL, " +
                     "league_year INTEGER not NULL, " +
-                    "PRIMARY KEY (email, league_name, league_year))";
+                    "PRIMARY KEY (email, league_name, league_year), " +
+                    "FOREIGN KEY (email) REFERENCES Player(email), " +
+                    "FOREIGN KEY (league_name, league_year) REFERENCES League(name, year) " +
+                    ")";
             statement.executeUpdate(sql);
             System.out.println("Table League_Player is created ");
 
