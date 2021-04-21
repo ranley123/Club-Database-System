@@ -17,11 +17,11 @@ public class DatabaseConnection {
      */
     public static void initDatabase() {
         Connection connection = makeConnection();
-        initPlayer("src/People.csv");
-        initVenues("src/Venues.csv");
-        initCourts("src/Courts.csv");
-        initLeague("src/Leagues.csv");
-        initLeaguePlayer("src/LeaguePlayer.csv");
+//        initPlayer("src/People.csv");
+//        initVenues("src/Venues.csv");
+//        initCourts("src/Courts.csv");
+//        initLeague("src/Leagues.csv");
+//        initLeaguePlayer("src/LeaguePlayer.csv");
         initMatches("src/Matches.csv");
 //        addProcAddVenue("New Club", "North Street", 3);
     }
@@ -257,8 +257,8 @@ public class DatabaseConnection {
             statement.executeUpdate("DROP TABLE IF EXISTS Played_Match");
             String sql = "CREATE TABLE Played_Match" +
                     "(" +
-                    "p1_email VARCHAR(50), " +
-                    "p2_email VARCHAR(50), " +
+                    "p1_email VARCHAR(50) NOT NULL, " +
+                    "p2_email VARCHAR(50) NOT NULL, " +
                     "p1_games_won INTEGER, " +
                     "p2_games_won INTEGER, " +
                     "CONSTRAINT valid_games " +
@@ -267,19 +267,19 @@ public class DatabaseConnection {
                     "date_played DATE, " +
                     "CONSTRAINT valid_year " +
                         "CHECK (year(date_played) = league_year), " +
-                    "court_number INTEGER, " +
-                    "venue_name VARCHAR(50), " +
-                    "league_name VARCHAR(50), " +
-                    "league_year INTEGER, " +
+                    "court_number INTEGER NOT NULL, " +
+                    "venue_name VARCHAR(50) NOT NULL, " +
+                    "league_name VARCHAR(50) NOT NULL, " +
+                    "league_year INTEGER NOT NULL, " +
                     "id INTEGER not NULL AUTO_INCREMENT, " +
                     "PRIMARY KEY (id), " +
                     "FOREIGN KEY (p1_email) REFERENCES Player(email), " +
                     "FOREIGN KEY (p2_email) REFERENCES Player(email), " +
                     "FOREIGN KEY (venue_name) REFERENCES Venue(name), " +
-                    "FOREIGN KEY (p1_email) REFERENCES Player(email), " +
                     "FOREIGN KEY (court_number, venue_name) REFERENCES Court(number, venue_name), " +
                     "FOREIGN KEY (league_name, league_year) REFERENCES League(name, year), " +
-                    "FOREIGN KEY (p1_email, league_name, league_year) REFERENCES League_Player(email, league_name, league_year)" +
+                    "FOREIGN KEY (p1_email, league_name, league_year) REFERENCES League_Player(email, league_name, league_year), " +
+                    "FOREIGN KEY (p2_email, league_name, league_year) REFERENCES League_Player(email, league_name, league_year)" +
                     ")";
             statement.executeUpdate(sql);
             System.out.println("Table Played_Match is created.");
@@ -453,8 +453,10 @@ public class DatabaseConnection {
 
         try{
             statement = connection.createStatement();
-            String query = "SELECT player.email, CONCAT_WS(' ', player.forename, Player.middlenames, player.surname), \n" +
-                    "GROUP_CONCAT(player_phone.phone_number separator ',') \n" +
+            String query =
+//                    "CREATE VIEW view_contact_details AS \n" +
+                    "SELECT CONCAT_WS(' ', player.forename, Player.middlenames, player.surname) AS 'Full name', player.email AS 'Email address',  \n" +
+                    "GROUP_CONCAT(player_phone.phone_number separator ',') AS 'Phone number(s)' \n" +
                     "FROM player, player_phone \n" +
                     "WHERE player.email = player_phone.email \n" +
                     "GROUP BY player.email \n" +
@@ -464,8 +466,8 @@ public class DatabaseConnection {
 
             while(playerResults.next()){
                 // Retrieve by column label
-                String email = playerResults.getString(1);
-                String fullname = playerResults.getString(2);
+                String fullname = playerResults.getString(1);
+                String email = playerResults.getString(2);
                 String phoneNumbers = playerResults.getString(3);
 //                System.out.println(email);
                 Player player = new Player(email, fullname, null, phoneNumbers);
@@ -490,7 +492,7 @@ public class DatabaseConnection {
             statement = connection.createStatement();
             String query =
 //                    "CREATE VIEW view_never_played AS\n" +
-                    "SELECT a.number, a.venue_name, Venue.address \n" +
+                    "SELECT a.number AS 'Court number', a.venue_name AS 'Venue name', Venue.address AS 'Address'\n" +
                     "FROM Venue, \n" +
                     "(SELECT DISTINCT Court.number, Court.venue_name \n" +
                     "FROM Court \n" +
@@ -530,7 +532,7 @@ public class DatabaseConnection {
             statement = connection.createStatement();
             String query =
 //                    "CREATE VIEW view_win_count AS \n" +
-                    "SELECT Winner.winner_email, COUNT(Winner.id) \n" +
+                    "SELECT Winner.winner_email AS 'Email address', COUNT(Winner.id) AS 'Number of matches won'\n" +
                     "FROM (SELECT id, \n" +
                             "(CASE " +
                             "WHEN p1_games_won > p2_games_won THEN p1_email\n" +
@@ -567,7 +569,8 @@ public class DatabaseConnection {
 //            String query = "SELECT CONCAT_WS(\",\",\"Player.forename\",\"Player.middlenames\",\"Player.surname\") " +
 //                    "FROM Player\n" +
 //                    "WHERE Player.email = ?";
-            String query = "SELECT Player.forename,Player.middlenames, Player.surname\n" +
+            String query =
+                    "SELECT CONCAT_WS(' ', Player.forename, Player.middlenames, Player.surname)\n" +
                     "FROM Player\n" +
                     "WHERE Player.email = ?";
             preparedStatement = connection.prepareStatement(query);
@@ -575,10 +578,7 @@ public class DatabaseConnection {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
-                String forename = resultSet.getString("forename");
-                String middlename = resultSet.getString("middlenames");
-                String surname = resultSet.getString("surname");
-                fullname = forename + " " + middlename + " " + surname;
+                fullname = resultSet.getString(1);
             }
 
             preparedStatement.close();
@@ -732,7 +732,9 @@ public class DatabaseConnection {
         try{
             connection = makeConnection();
             statement = connection.createStatement();
-            String query = "SELECT CONCAT_WS(' ', Player.forename, Player.middlenames, Player.surname), SUM(League.prize_money) FROM Player, League \n" +
+            String query =
+//                    "CREATE VIEW view_rank_players AS\n" +
+                    "SELECT CONCAT_WS(' ', Player.forename, Player.middlenames, Player.surname) AS 'Full name', SUM(League.prize_money) AS 'Total Prize' FROM Player, League \n" +
                     "WHERE Player.email = League.winner_email\n" +
                     "GROUP BY League.winner_email\n" +
                     "ORDER BY SUM(League.prize_money) DESC";
