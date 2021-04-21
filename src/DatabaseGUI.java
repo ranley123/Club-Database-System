@@ -21,8 +21,6 @@ public class DatabaseGUI implements ActionListener {
     private JMenuItem checkWonPlayersItem;
     private JMenuItem checkUnusedCourtsItem;
     private JMenuItem checkRankPlayersItem;
-
-    private JMenuItem addNewMatchItem;
     private JComboBox leagueNameCombo;
     private JComboBox leagueYearCombo;
     JTextField p1EmailTf;
@@ -34,7 +32,6 @@ public class DatabaseGUI implements ActionListener {
     JTextField venueNameTf;
     JTextField leagueNameTf;
     JTextField leagueYearTf;
-
 
     public DatabaseGUI() {
         initInterface();
@@ -50,7 +47,6 @@ public class DatabaseGUI implements ActionListener {
         checkWonPlayersItem = new JMenuItem("Check Won Players");
         checkUnusedCourtsItem = new JMenuItem("Check Unused Courts");
         checkRankPlayersItem = new JMenuItem("Check Player Ranking");
-        addNewMatchItem = new JMenuItem("Add a New Match");
 
         tableData = new DefaultTableModel() {
             public Class<String> getColumnClass(int columnIndex) {
@@ -62,7 +58,7 @@ public class DatabaseGUI implements ActionListener {
             }
         };
 
-        ArrayList<String> leagueNameList = Main.getAllLeagueNames();
+        ArrayList<String> leagueNameList = DatabaseConnection.getAllLeagueNames();
         String[] leagueNames = new String[leagueNameList.size()];
 
         for (int i = 0; i < leagueNames.length; i++) {
@@ -96,7 +92,7 @@ public class DatabaseGUI implements ActionListener {
         JButton searchBtn = new JButton("Search");
         JButton insertBtn = new JButton("Insert Match");
         leagueNameCombo = new JComboBox(leagueNames);
-        ArrayList<Integer> leagueYearList = Main.getAllLeagueYearsByName(leagueNameCombo.getSelectedItem().toString());
+        ArrayList<Integer> leagueYearList = DatabaseConnection.getAllLeagueYearsByName(leagueNameCombo.getSelectedItem().toString());
         String[] leagueYears = new String[leagueYearList.size()];
         for (int i = 0; i < leagueYears.length; i++) {
             leagueYears[i] = leagueYearList.get(i) + "";
@@ -199,7 +195,6 @@ public class DatabaseGUI implements ActionListener {
         popupMenu.add(checkWonPlayersItem);
         popupMenu.add(checkUnusedCourtsItem);
         popupMenu.add(checkRankPlayersItem);
-        popupMenu.add(addNewMatchItem);
 
         mainFrame.addMouseListener(new MouseAdapter() {
 
@@ -225,7 +220,6 @@ public class DatabaseGUI implements ActionListener {
         checkWonPlayersItem.addActionListener(this);
         checkUnusedCourtsItem.addActionListener(this);
         checkRankPlayersItem.addActionListener(this);
-        addNewMatchItem.addActionListener(this);
 
         table.setComponentPopupMenu(popupMenu);
         table.setFillsViewportHeight(true);
@@ -239,7 +233,7 @@ public class DatabaseGUI implements ActionListener {
     }
 
     public void checkAllPlayers() {
-        ArrayList<Model> players = Main.getAllPlayers();
+        ArrayList<Model> players = DatabaseConnection.getAllPlayers();
         if (players.isEmpty()) {
             JOptionPane.showMessageDialog(null, "There is no player.");
         } else {
@@ -252,7 +246,7 @@ public class DatabaseGUI implements ActionListener {
     }
 
     private void checkWonPlayers() {
-        LinkedHashMap<String, Integer> map = Main.getAllWonPlayers();
+        LinkedHashMap<String, Integer> map = DatabaseConnection.getAllWonPlayers();
         if (map.isEmpty()) {
             JOptionPane.showMessageDialog(null, "There is no player won.");
         } else {
@@ -273,7 +267,7 @@ public class DatabaseGUI implements ActionListener {
     }
 
     private void checkUnusedCourts() {
-        ArrayList<Model> courts = Main.getUnUsedCourt();
+        ArrayList<Model> courts = DatabaseConnection.getUnUsedCourt();
         if (courts.isEmpty()) {
             JOptionPane.showMessageDialog(null, "There is no player won.");
         } else {
@@ -285,7 +279,7 @@ public class DatabaseGUI implements ActionListener {
     }
 
     private void checkLeague(String leagueName, int leagueYear) {
-        ArrayList<Model> matches = Main.getLeagueMatches(leagueName, leagueYear);
+        ArrayList<Model> matches = DatabaseConnection.getLeagueMatches(leagueName, leagueYear);
         if (matches.isEmpty())
             JOptionPane.showMessageDialog(null, "There is no League");
         else {
@@ -298,14 +292,23 @@ public class DatabaseGUI implements ActionListener {
     }
 
     private void checkRankingPlayers(){
-        ArrayList<String> players = Main.rankPlayers();
-        if (players.isEmpty()) {
+        LinkedHashMap<String, String> map = DatabaseConnection.rankPlayers();
+        if (map.isEmpty()) {
             JOptionPane.showMessageDialog(null, "There is no player won.");
         } else {
-//            String[] columnNames = new String[]{"Email, Prize Money"};
-//            Object[][] data = convertToTableData(players, columnNames);
-//            tableData.setDataVector(data, columnNames);
-//            table.setModel(tableData);
+            String[] columnNames = new String[]{"Player Name", "Won Prize Money"};
+            Object[][] data = new Object[map.size()][columnNames.length];
+            int i = 0;
+
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                String email = entry.getKey();
+                String money = entry.getValue();
+                data[i][0] = email;
+                data[i][1] = money;
+                i++;
+            }
+            tableData.setDataVector(data, columnNames);
+            table.setModel(tableData);
         }
     }
 
@@ -336,40 +339,68 @@ public class DatabaseGUI implements ActionListener {
                 checkUnusedCourts();
             } else if (menu == checkRankPlayersItem) {
                 checkRankingPlayers();
-            } else if (menu == addNewMatchItem) {
-
-
             }
         } else if (src instanceof JButton) {
             if (((JButton) src).getText().compareTo("Search") == 0) {
                 String leagueName = leagueNameCombo.getSelectedItem().toString();
-                int leagueYear = Integer.parseInt(leagueYearCombo.getSelectedItem().toString());
+                int leagueYear = 0;
+                try{
+                    leagueYear = Integer.parseInt(leagueYearCombo.getSelectedItem().toString());
+                }
+                catch (NumberFormatException e){
+                    JOptionPane.showMessageDialog(null, "Please enter valid numbers");
+                    return;
+                }
                 checkLeague(leagueName, leagueYear);
             } else {
                 String p1Email = p1EmailTf.getText();
                 String p2Email = p1EmailTf.getText();
-                int p1GamesWon = Integer.parseInt(p1GamesWonTf.getText());
-                int p2GamesWon = Integer.parseInt(p2GamesWonTf.getText());
-                Date datePlayed = Date.valueOf(datePlayedTf.getText());
-                int courtNumber = Integer.parseInt(courtNumberTf.getText());
+                int p1GamesWon = 0;
+                int p2GamesWon = 0;
+                int courtNumber = 0;
+                int leagueYear = 0;
+                Date datePlayed;
+                try{
+                    p1GamesWon = Integer.parseInt(p1GamesWonTf.getText());
+                    p2GamesWon = Integer.parseInt(p2GamesWonTf.getText());
+                    courtNumber = Integer.parseInt(courtNumberTf.getText());
+                    leagueYear = Integer.parseInt(leagueYearTf.getText());
+                    datePlayed = Date.valueOf(datePlayedTf.getText());
+                }
+                catch(NumberFormatException e){
+                    JOptionPane.showMessageDialog(null, "Please enter valid numbers");
+                    return;
+                }
+                catch(IllegalArgumentException e){
+                    JOptionPane.showMessageDialog(null, "Please enter valid date yy-mm-dd");
+                    return;
+                }
                 String venueName = venueNameTf.getText();
                 String leagueName = leagueNameTf.getText();
-                int leagueYear = Integer.parseInt(leagueYearTf.getText());
 
-                p1Email = "ranley0109@gmail.com";
-                p2Email = "yuhuan0109@gmail.com";
-                p1GamesWon = 1;
-                p2GamesWon = 3;
-                datePlayed = Date.valueOf("2020-01-09");
-                courtNumber = 1;
-                venueName = "University Sports Centre";
-                leagueName = "Alexander McLintoch trophy";
-                leagueYear = 2020;
+//                p1Email = "ranley0109@gmail.com";
+//                p2Email = "yuhuan0109@gmail.com";
+//                p1GamesWon = 1;
+//                p2GamesWon = 3;
+//                datePlayed = Date.valueOf("2020-01-09");
+//                courtNumber = 1;
+//                venueName = "University Sports Centre";
+//                leagueName = "Alexander McLintoch trophy";
+//                leagueYear = 2020;
 
-                Main.insertMatch(p1Email, p2Email, p1GamesWon, p2GamesWon, datePlayed, courtNumber, venueName, leagueName, leagueYear);
+                DatabaseConnection.insertMatch(p1Email, p2Email, p1GamesWon, p2GamesWon, datePlayed, courtNumber, venueName, leagueName, leagueYear);
             }
         }
     }
 
+    public static void main(String[] args) {
+        DatabaseGUI gui = new DatabaseGUI();
+
+        gui.initInterface();
+//        printDatabase("League");
+//        getAllLeagueYearsByName("Alexander McLintoch trophy");
+//        addProcAddVenue();
+//        rankPlayers();
+    }
 
 }

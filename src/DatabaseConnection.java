@@ -11,15 +11,16 @@ import java.awt.event.*;
 import java.sql.Date;
 import java.util.*;
 
-public class Main {
-    public static void main(String[] args) {
-        Main main = new Main();
-        main.initDatabase();
+public class DatabaseConnection {
+//    public static void main(String[] args) {
+//        Main main = new Main();
+////        main.initDatabase();
 //        main.initInterface();
-//        printDatabase("League");
-//        getAllLeagueYearsByName("Alexander McLintoch trophy");
-//        addProcAddVenue();
-    }
+////        printDatabase("League");
+////        getAllLeagueYearsByName("Alexander McLintoch trophy");
+////        addProcAddVenue();
+////        rankPlayers();
+//    }
 
     private void initInterface() {
         JFrame mainFrame = new JFrame("Button Example");
@@ -55,14 +56,14 @@ public class Main {
         mainFrame.setVisible(true);
     }
 
-    private void initDatabase() {
+    public static void initDatabase() {
         Connection connection = makeConnection();
 //        initPlayer("src/People.csv");
 //        initVenues("src/Venues.csv");
 //        initCourts("src/Courts.csv");
 //        initLeague("src/Leagues.csv");
 //        initLeaguePlayer("src/LeaguePlayer.csv");
-        initMatches("src/Matches.csv");
+//        initMatches("src/Matches.csv");
 //        addProcAddVenue("New Club", "North Street", 3);
     }
 
@@ -778,46 +779,23 @@ public class Main {
         }
     }
 
-    public static void addProcAddVenue(){
-        Connection connection = makeConnection();
-        try{
-            Statement statement = connection.createStatement();
-            String query = "DELIMITER // " +
-                    "CREATE PROCEDURE proc_add_venue (IN venue_name VARCHAR(50), IN venue_address VARCHAR(50), IN max_court INT)\n" +
-                    "BEGIN\n" +
-                    "START TRANSACTION;\n" +
-                        "INSERT INTO Venue VALUES(venue_name, venue_address);\n" +
-                        "FOR i in 1..max_court\n" +
-                        "DO INSERT INTO Court VALUES (i, venue_name)\n" +
-                        "END FOR;\n" +
-                    "COMMIT;\n" +
-                    "END;\n" +
-                    "// DELIMITER ;"
-                    ;
-            statement.executeUpdate(query);
-            connection.close();
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
     // TODO: new view to rank players based on their prize money
-    public static ArrayList<String> rankPlayers(){
+    public static LinkedHashMap<String, String> rankPlayers(){
         Connection connection = null;
         Statement statement = null;
-        ArrayList<String> players = new ArrayList<>();
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
         try{
             connection = makeConnection();
             statement = connection.createStatement();
-            String query = "SELECT Player.email FROM Player, League \n" +
+            String query = "SELECT CONCAT_WS(' ', Player.forename, Player.middlenames, Player.surname), SUM(League.prize_money) FROM Player, League \n" +
                     "WHERE Player.email = League.winner_email\n" +
-                    "ORDER BY League.prize_money DESC";
+                    "GROUP BY League.winner_email\n" +
+                    "ORDER BY SUM(League.prize_money) DESC";
             ResultSet resultSet = statement.executeQuery(query);
 
             while(resultSet.next()){
-                players.add(resultSet.getString(1));
+                map.put(resultSet.getString(1), "" + resultSet.getFloat(2));
             }
 
             connection.close();
@@ -827,6 +805,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        return players;
+        return map;
     }
 }
