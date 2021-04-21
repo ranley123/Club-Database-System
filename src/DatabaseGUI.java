@@ -395,12 +395,12 @@ public class DatabaseGUI implements ActionListener {
     }
 
     public static void main(String[] args) {
-//        DatabaseGUI gui = new DatabaseGUI();
+        DatabaseGUI gui = new DatabaseGUI();
 //        printDatabase("League");
 //        DatabaseConnection.getAllPlayers();
 //        getAllLeagueYearsByName("Alexander McLintoch trophy");
 //        addProcAddVenue();
-        DatabaseConnection.rankPlayers();
+//        DatabaseConnection.rankPlayers();
 //        DatabaseConnection.getUnUsedCourt();
 //        DatabaseConnection.getAllPlayers();
 //        DatabaseConnection.getAllWonPlayers();
