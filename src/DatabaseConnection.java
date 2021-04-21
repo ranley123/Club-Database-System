@@ -1,4 +1,3 @@
-import Exceptions.*;
 import Models.*;
 
 import java.awt.event.ActionListener;
@@ -12,61 +11,25 @@ import java.sql.Date;
 import java.util.*;
 
 public class DatabaseConnection {
-//    public static void main(String[] args) {
-//        Main main = new Main();
-////        main.initDatabase();
-//        main.initInterface();
-////        printDatabase("League");
-////        getAllLeagueYearsByName("Alexander McLintoch trophy");
-////        addProcAddVenue();
-////        rankPlayers();
-//    }
 
-    private void initInterface() {
-        JFrame mainFrame = new JFrame("Button Example");
-        JLabel usernameLabel = new JLabel("username");
-        JLabel passwordLabel = new JLabel("password");
-        JTextField usernameText = new JTextField();
-        JTextField passwordText = new JTextField();
-        JButton loginBtn = new JButton("Login");
-
-        usernameLabel.setBounds(50, 50, 150, 20);
-        passwordLabel.setBounds(50, 90, 150, 20);
-        usernameText.setBounds(210, 50, 150, 20);
-        passwordText.setBounds(210, 90, 150, 20);
-        loginBtn.setBounds(150, 150, 95, 30);
-
-
-        loginBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new DatabaseGUI();
-                mainFrame.setVisible(false);
-            }
-        });
-
-        mainFrame.add(loginBtn);
-        mainFrame.add(usernameLabel);
-        mainFrame.add(passwordLabel);
-        mainFrame.add(usernameText);
-        mainFrame.add(passwordText);
-        mainFrame.add(usernameText);
-
-        mainFrame.setSize(400, 400);
-        mainFrame.setLayout(null);
-        mainFrame.setVisible(true);
-    }
-
+    /**
+     * This function mainly initialise the database based on existing files
+     */
     public static void initDatabase() {
         Connection connection = makeConnection();
-//        initPlayer("src/People.csv");
-//        initVenues("src/Venues.csv");
-//        initCourts("src/Courts.csv");
-//        initLeague("src/Leagues.csv");
-//        initLeaguePlayer("src/LeaguePlayer.csv");
-//        initMatches("src/Matches.csv");
+        initPlayer("src/People.csv");
+        initVenues("src/Venues.csv");
+        initCourts("src/Courts.csv");
+        initLeague("src/Leagues.csv");
+        initLeaguePlayer("src/LeaguePlayer.csv");
+        initMatches("src/Matches.csv");
 //        addProcAddVenue("New Club", "North Street", 3);
     }
 
+    /**
+     * This function mainly makes a connection and returns it
+     * @return  Connection  - a usable connection to manipulate the database
+     */
     public static Connection makeConnection() {
         Connection connection = null;
 
@@ -75,8 +38,6 @@ public class DatabaseConnection {
             String dbUrl = "jdbc:mariadb://localhost/hy30_db";
 //            String uname = "hy30";mysqld_safe --skip-grant-tables &
 //            String passwd = ".611MKA73dHitM";
-            String uname = "ranley";
-            String password = "buzhidao";
 
             System.out.println("Connecting to Database ...");
             connection = DriverManager.getConnection(dbUrl, "root", "buzhidao");
@@ -87,6 +48,10 @@ public class DatabaseConnection {
         return connection;
     }
 
+    /**
+     * This function mainly initialise Player and Player_Phone tables
+     * @param filename  - the file to be read
+     */
     public static void initPlayer(String filename){
         try{
             Connection connection = makeConnection();
@@ -99,15 +64,15 @@ public class DatabaseConnection {
 
             // init Player table
             statement.executeUpdate("DROP TABLE IF EXISTS Player");
-            String sql = "CREATE TABLE Player"
-                    + "(forename VARCHAR(50), "
-                    + "middlenames VARCHAR(50), "
-                    + "surname VARCHAR(50), "
-                    + "date_of_birth DATE, "
-                    + "email VARCHAR(50) not NULL, "
-                    + " PRIMARY KEY (email))";
+            String sql = "CREATE TABLE Player\n"
+                    + "(forename VARCHAR(50), \n"
+                    + "middlenames VARCHAR(50), \n"
+                    + "surname VARCHAR(50), \n"
+                    + "date_of_birth DATE, \n"
+                    + "email VARCHAR(50) not NULL, \n"
+                    + "PRIMARY KEY (email))";
             statement.executeUpdate(sql);
-            System.out.println("Table Player is created ");
+            System.out.println("Table Player is created!");
 
             // init Player_Phone table
             statement.executeUpdate("DROP TABLE IF EXISTS Player_Phone");
@@ -124,7 +89,7 @@ public class DatabaseConnection {
                     "FOREIGN KEY (email) REFERENCES Player(email)" +
                     ")";
             statement.executeUpdate(sql);
-            System.out.println("Table Player_Phone is created ");
+            System.out.println("Table Player_Phone is created!");
 
             sql = "INSERT INTO Player VALUES (?, ?, ?, ?, ?)";
 
@@ -181,6 +146,10 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * This function mainly initialise Venue
+     * @param filename  - the file to be read
+     */
     public static void initVenues(String filename){
         try{
             Connection connection = makeConnection();
@@ -223,6 +192,10 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * This function mainly initialise Court
+     * @param filename  - the file to be read
+     */
     public static void initCourts(String filename){
         try{
             Connection connection = makeConnection();
@@ -266,6 +239,10 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * This function mainly initialise Match
+     * @param filename  - the file to be read
+     */
     public static void initMatches(String filename){
         try{
             Connection connection = makeConnection();
@@ -356,6 +333,10 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * This function mainly initialise League
+     * @param filename  - the file to be read
+     */
     public static void initLeague(String filename){
         try{
             Connection connection = makeConnection();
@@ -406,6 +387,10 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * This function mainly initialise League_Player
+     * @param filename  - the file to be read
+     */
     public static void initLeaguePlayer(String filename){
         try{
             Connection connection = makeConnection();
@@ -454,75 +439,42 @@ public class DatabaseConnection {
         }
     }
 
-    public static void printDatabase(String tableName){
-        Connection connection = makeConnection();
-        try{
-            Statement statement = connection.createStatement();
-            String sql = "SELECT * FROM League WHERE name = ?";
-            PreparedStatement statement1 = connection.prepareStatement(sql);
-            statement1.setString(1, "Alexander McLintoch trophy");
-            ResultSet rs = statement1.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-
-            while(rs.next()){
-                System.out.println(rs.getString(4));
-            }
-
-            connection.close();
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
-
-    }
-
+    /**
+     * This function mainly get all players information
+     * @return
+     */
+//    create view contact_details as select player.email, concat_ws(' ', player.forename, player.middlenames,player.surname), group_concat(player_phone.phone_number separator ',') from player, player_phone where player.email = player_phone.email group by player.email order by player.surname, concat_ws(',', player.forename, player.middlenames, player.surname), player.email;
     public static ArrayList<Model> getAllPlayers(){
         ArrayList<Model> playerLists = new ArrayList<>();
-        HashMap<String, Player> map = new HashMap<>();
+        LinkedHashMap<String, Player> map = new LinkedHashMap<>();
 
         Connection connection = makeConnection();
         Statement statement = null;
 
         try{
             statement = connection.createStatement();
-            String query ="SELECT\n" +
-                    "Player.email,\n" +
-                    "Player.forename,\n" +
-                    "Player.middlenames,\n" +
-                    "Player.surname,\n" +
-                    "Player_Phone.phone_number\n" +
-                    "FROM\n" +
-                    "Player, Player_Phone\n" +
-                    "where Player.email = Player_Phone.email;";
+            String query = "SELECT player.email, CONCAT_WS(' ', player.forename, Player.middlenames, player.surname), \n" +
+                    "GROUP_CONCAT(player_phone.phone_number separator ',') \n" +
+                    "FROM player, player_phone \n" +
+                    "WHERE player.email = player_phone.email \n" +
+                    "GROUP BY player.email \n" +
+                    "ORDER BY player.surname, CONCAT_WS(' ', player.forename, Player.middlenames, player.surname), player.email;";
 
             ResultSet playerResults  = statement.executeQuery(query);
 
             while(playerResults.next()){
                 // Retrieve by column label
-                String email = playerResults.getString("email");
-                String forename = playerResults.getString("forename");
-                String middlename = playerResults.getString("middlenames");
-                String surname = playerResults.getString("surname");
-                String phoneNumber = playerResults.getString("phone_number");
-
-                if(map.containsKey(email)){
-                    Player player = map.get(email);
-                    player.addPhoneNumber(phoneNumber);
-                }
-                else{
-                    Player player = new Player(email, forename, middlename, surname, null, phoneNumber);
-                    map.put(email, player);
-                }
+                String email = playerResults.getString(1);
+                String fullname = playerResults.getString(2);
+                String phoneNumbers = playerResults.getString(3);
+//                System.out.println(email);
+                Player player = new Player(email, fullname, null, phoneNumbers);
+                playerLists.add(player);
             }
             playerResults.close();
         }
         catch (SQLException e){
             e.printStackTrace();
-        }
-
-        for (Map.Entry<String, Player> entry : map.entrySet()){
-            Player player = entry.getValue();
-            playerLists.add(player);
         }
         return playerLists;
     }
@@ -536,39 +488,31 @@ public class DatabaseConnection {
 
         try{
             statement = connection.createStatement();
-            String query = "SELECT DISTINCT Court.number, Court.venue_name\n" +
+            String query =
+//                    "CREATE VIEW view_never_played AS\n" +
+                    "SELECT a.number, a.venue_name, Venue.address \n" +
+                    "FROM Venue, \n" +
+                    "(SELECT DISTINCT Court.number, Court.venue_name \n" +
                     "FROM Court \n" +
                     "LEFT JOIN Played_Match \n" +
                     "ON Court.venue_name = Played_Match.venue_name\n" +
                     "and Court.number = Played_Match.court_number\n" +
                     "WHERE Played_Match.id is NULL\n" +
-                    "ORDER BY Court.venue_name ASC, Court.number ASC";
+                    "ORDER BY Court.venue_name ASC, Court.number ASC) a \n" +
+                    "WHERE a.venue_name = Venue.name; ";
             ResultSet resultSet  = statement.executeQuery(query);
-            query = "SELECT address FROM Venue\n" +
-                    "WHERE name = ?";
-            preparedStatement = connection.prepareStatement(query);
 
             while(resultSet.next()){
                 String venueName = resultSet.getString(2);
                 int courtNumber = resultSet.getInt(1);
-                String venueAddress = "";
-
-                preparedStatement.setString(1, venueName);
-                ResultSet curRes = preparedStatement.executeQuery();
-
-                while(curRes.next()){
-                    venueAddress = curRes.getString(1);
-                }
-                curRes.close();
+                String venueAddress = resultSet.getString(3);
 
                 Court court = new Court(courtNumber, venueName, venueAddress);
                 res.add(court);
 
-                preparedStatement.clearParameters();
             }
             resultSet.close();
             statement.close();
-            preparedStatement.close();
             connection.close();
         }
         catch (SQLException e){
@@ -807,4 +751,6 @@ public class DatabaseConnection {
 
         return map;
     }
+
+//    create procedure proc_delete_venue(IN venue_name VARCHAR(50)) begin start transaction; delete from court where court.venue_name = venue_name; delete from venue where venue.name = venue_name; commit; end;//
 }

@@ -19,7 +19,7 @@ public class Court implements Model{
 
     @Override
     public String toString(){
-        return venueName + " " + number;
+        return venueName + " " + number + " " + venueAddress;
     }
 
 

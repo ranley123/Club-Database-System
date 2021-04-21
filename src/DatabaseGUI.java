@@ -1,9 +1,9 @@
 import Models.Model;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.crypto.Data;
 import java.awt.event.*;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ public class DatabaseGUI implements ActionListener {
 
     public DatabaseGUI() {
         initInterface();
+//        DatabaseConnection.getAllPlayers();
     }
 
     private void initInterface() {
@@ -395,12 +396,11 @@ public class DatabaseGUI implements ActionListener {
 
     public static void main(String[] args) {
         DatabaseGUI gui = new DatabaseGUI();
-
-        gui.initInterface();
 //        printDatabase("League");
 //        getAllLeagueYearsByName("Alexander McLintoch trophy");
 //        addProcAddVenue();
 //        rankPlayers();
+//        DatabaseConnection.getUnUsedCourt();
     }
 
 }
