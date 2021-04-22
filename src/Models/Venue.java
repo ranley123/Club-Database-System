@@ -10,7 +10,7 @@ public class Venue implements Model{
     }
 
     @Override
-    public String[] toStringArray() {
-        return new String[]{name, address};
+    public Object[] toObjectArray() {
+        return new Object[]{name, address};
     }
 }

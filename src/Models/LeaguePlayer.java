@@ -12,7 +12,7 @@ public class LeaguePlayer implements Model{
     }
 
     @Override
-    public String[] toStringArray() {
-        return new String[]{email, leagueName, leagueYear + ""};
+    public Object[] toObjectArray() {
+        return new Object[]{email, leagueName, leagueYear};
     }
 }

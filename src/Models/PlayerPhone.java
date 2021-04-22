@@ -12,7 +12,7 @@ public class PlayerPhone implements Model{
     }
 
     @Override
-    public String[] toStringArray() {
-        return new String[]{email, phoneNumber, phoneType};
+    public Object[] toObjectArray() {
+        return new Object[]{email, phoneNumber, phoneType};
     }
 }

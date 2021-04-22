@@ -36,7 +36,7 @@ public class Player implements Model{
 
 
     @Override
-    public String[] toStringArray() {
-        return new String[]{fullname, email, phoneNumbers};
+    public Object[] toObjectArray() {
+        return new Object[]{fullname, email, phoneNumbers};
     }
 }

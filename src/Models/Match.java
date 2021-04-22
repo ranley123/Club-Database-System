@@ -25,8 +25,8 @@ public class Match implements Model{
     }
 
     @Override
-    public String[] toStringArray() {
-        return new String[]{"" + id, p1Name, p2Name, "" + p1GamesWon,
-                "" + p2GamesWon, datePlayed.toString(), courtNumber + "", venueName};
+    public Object[] toObjectArray() {
+        return new Object[]{id, p1Name, p2Name, p1GamesWon,
+                p2GamesWon, datePlayed.toString(), courtNumber, venueName};
     }
 }

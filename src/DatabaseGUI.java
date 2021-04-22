@@ -1,8 +1,11 @@
 import Models.Model;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.event.*;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -49,14 +52,15 @@ public class DatabaseGUI implements ActionListener {
         checkRankPlayersItem = new JMenuItem("Check Player Ranking");
 
         tableData = new DefaultTableModel() {
-            public Class<String> getColumnClass(int columnIndex) {
-                return String.class;
+            public Class getColumnClass(int columnIndex) {
+                return getValueAt(0, columnIndex).getClass();
             }
 
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+
 
         ArrayList<String> leagueNameList = DatabaseConnection.getAllLeagueNames();
         String[] leagueNames = new String[leagueNameList.size()];
@@ -228,7 +232,7 @@ public class DatabaseGUI implements ActionListener {
         mainFrame.add(panel, BorderLayout.NORTH);
         mainFrame.add(scrollPane, BorderLayout.SOUTH);
 //
-        mainFrame.setSize(800, 600);
+        mainFrame.setSize(800, 900);
         mainFrame.setVisible(true);
     }
 
@@ -242,6 +246,8 @@ public class DatabaseGUI implements ActionListener {
 
             tableData.setDataVector(data, columnNames);
             table.setModel(tableData);
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableData);
+            table.setRowSorter(sorter);
         }
     }
 
@@ -263,6 +269,8 @@ public class DatabaseGUI implements ActionListener {
             }
             tableData.setDataVector(data, columnNames);
             table.setModel(tableData);
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableData);
+            table.setRowSorter(sorter);
         }
     }
 
@@ -275,6 +283,8 @@ public class DatabaseGUI implements ActionListener {
             Object[][] data = convertToTableData(courts, columnNames);
             tableData.setDataVector(data, columnNames);
             table.setModel(tableData);
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableData);
+            table.setRowSorter(sorter);
         }
     }
 
@@ -288,10 +298,12 @@ public class DatabaseGUI implements ActionListener {
             Object[][] data = convertToTableData(matches, columnNames);
             tableData.setDataVector(data, columnNames);
             table.setModel(tableData);
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableData);
+            table.setRowSorter(sorter);
         }
     }
 
-    private void checkRankingPlayers(){
+    private void checkRankingPlayers() {
         LinkedHashMap<String, String> map = DatabaseConnection.rankPlayers();
         if (map.isEmpty()) {
             JOptionPane.showMessageDialog(null, "There is no player won.");
@@ -309,6 +321,8 @@ public class DatabaseGUI implements ActionListener {
             }
             tableData.setDataVector(data, columnNames);
             table.setModel(tableData);
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableData);
+            table.setRowSorter(sorter);
         }
     }
 
@@ -316,7 +330,7 @@ public class DatabaseGUI implements ActionListener {
         Object[][] data = new Object[dataList.size()][columnNames.length];
         for (int i = 0; i < dataList.size(); i++) {
             Model curModel = dataList.get(i);
-            String[] fields = curModel.toStringArray();
+            Object[] fields = curModel.toObjectArray();
 
             for (int j = 0; j < columnNames.length; j++) {
                 data[i][j] = fields[j];
@@ -344,10 +358,9 @@ public class DatabaseGUI implements ActionListener {
             if (((JButton) src).getText().compareTo("Search") == 0) {
                 String leagueName = leagueNameCombo.getSelectedItem().toString();
                 int leagueYear = 0;
-                try{
+                try {
                     leagueYear = Integer.parseInt(leagueYearCombo.getSelectedItem().toString());
-                }
-                catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Please enter valid numbers");
                     return;
                 }
@@ -360,18 +373,16 @@ public class DatabaseGUI implements ActionListener {
                 int courtNumber = 0;
                 int leagueYear = 0;
                 Date datePlayed;
-                try{
+                try {
                     p1GamesWon = Integer.parseInt(p1GamesWonTf.getText());
                     p2GamesWon = Integer.parseInt(p2GamesWonTf.getText());
                     courtNumber = Integer.parseInt(courtNumberTf.getText());
                     leagueYear = Integer.parseInt(leagueYearTf.getText());
                     datePlayed = Date.valueOf(datePlayedTf.getText());
-                }
-                catch(NumberFormatException e){
+                } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Please enter valid numbers");
                     return;
-                }
-                catch(IllegalArgumentException e){
+                } catch (IllegalArgumentException e) {
                     JOptionPane.showMessageDialog(null, "Please enter valid date yy-mm-dd");
                     return;
                 }

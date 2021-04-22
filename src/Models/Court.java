@@ -23,7 +23,7 @@ public class Court implements Model{
     }
 
 
-    public String[] toStringArray(){
-        return new String[]{"" + number, venueName, venueAddress};
+    public Object[] toObjectArray(){
+        return new Object[]{number, venueName, venueAddress};
     }
 }

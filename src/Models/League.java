@@ -18,7 +18,7 @@ public class League implements Model{
     public int getYear(){return year;}
 
     @Override
-    public String[] toStringArray() {
-        return new String[] {name, year + "", prizeMoney + "", winnerEmail};
+    public Object[] toObjectArray() {
+        return new Object[] {name, year, prizeMoney, winnerEmail};
     }
 }
