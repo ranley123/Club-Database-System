@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `Court`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Court` (
-  `number` int(11) NOT NULL,
+  `number` tinyint(3) unsigned NOT NULL,
   `venue_name` varchar(50) NOT NULL,
   PRIMARY KEY (`number`,`venue_name`),
   KEY `venue_name` (`venue_name`),
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS `League`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `League` (
   `name` varchar(50) NOT NULL,
-  `year` int(11) NOT NULL,
+  `year` smallint(5) unsigned NOT NULL,
   `prize_money` float DEFAULT NULL,
   `winner_email` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`name`,`year`),
@@ -65,7 +65,7 @@ CREATE TABLE `League` (
 
 LOCK TABLES `League` WRITE;
 /*!40000 ALTER TABLE `League` DISABLE KEYS */;
-INSERT INTO `League` VALUES ('Alexander McLintoch trophy',2018,250,'louis.payne@gmail.com'),('Alexander McLintoch trophy',2019,100,'tabitha.stacey@gmail.com'),('Alexander McLintoch trophy',2020,300,'sylvia.hathaway@gmail.com'),('Oldies cup',2018,50,'srrogers@yahoo.co.uk'),('Oldies cup',2019,50,'srrogers@yahoo.co.uk'),('Oldies cup',2020,0,'u_marsden@gmail.com');
+INSERT INTO `League` VALUES ('alexander mclintoch trophy',2018,250,'louis.payne@gmail.com'),('alexander mclintoch trophy',2019,100,'tabitha.stacey@gmail.com'),('alexander mclintoch trophy',2020,300,'sylvia.hathaway@gmail.com'),('oldies cup',2018,50,'srrogers@yahoo.co.uk'),('oldies cup',2019,50,'srrogers@yahoo.co.uk'),('oldies cup',2020,0,'u_marsden@gmail.com');
 /*!40000 ALTER TABLE `League` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,7 +79,7 @@ DROP TABLE IF EXISTS `League_Player`;
 CREATE TABLE `League_Player` (
   `email` varchar(50) NOT NULL,
   `league_name` varchar(50) NOT NULL,
-  `league_year` int(11) NOT NULL,
+  `league_year` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`email`,`league_name`,`league_year`),
   KEY `league_name` (`league_name`,`league_year`),
   CONSTRAINT `league_player_ibfk_1` FOREIGN KEY (`email`) REFERENCES `Player` (`email`),
@@ -93,7 +93,7 @@ CREATE TABLE `League_Player` (
 
 LOCK TABLES `League_Player` WRITE;
 /*!40000 ALTER TABLE `League_Player` DISABLE KEYS */;
-INSERT INTO `League_Player` VALUES ('butch@xyz.club','Alexander McLintoch trophy',2019),('butch@xyz.club','Alexander McLintoch trophy',2020),('final_fantasy_freak1993@hotmail.com','Alexander McLintoch trophy',2018),('final_fantasy_freak1993@hotmail.com','Alexander McLintoch trophy',2019),('gary_the_man@yahoo.co.uk','Alexander McLintoch trophy',2019),('gary_the_man@yahoo.co.uk','Alexander McLintoch trophy',2020),('gary_the_man@yahoo.co.uk','Oldies cup',2018),('gary_the_man@yahoo.co.uk','Oldies cup',2019),('gary_the_man@yahoo.co.uk','Oldies cup',2020),('jwh@hotmail.com','Alexander McLintoch trophy',2018),('jwh@hotmail.com','Alexander McLintoch trophy',2019),('louis.payne@gmail.com','Alexander McLintoch trophy',2018),('srrogers@yahoo.co.uk','Oldies cup',2018),('srrogers@yahoo.co.uk','Oldies cup',2019),('sylvia.hathaway@gmail.com','Alexander McLintoch trophy',2018),('sylvia.hathaway@gmail.com','Alexander McLintoch trophy',2019),('sylvia.hathaway@gmail.com','Alexander McLintoch trophy',2020),('tabitha.stacey@gmail.com','Alexander McLintoch trophy',2018),('tabitha.stacey@gmail.com','Alexander McLintoch trophy',2019),('tabitha.stacey@gmail.com','Alexander McLintoch trophy',2020),('tasha.marsden@gmail.com','Oldies cup',2018),('tasha.marsden@gmail.com','Oldies cup',2019),('tasha.marsden@gmail.com','Oldies cup',2020),('u_marsden@gmail.com','Oldies cup',2018),('u_marsden@gmail.com','Oldies cup',2019),('u_marsden@gmail.com','Oldies cup',2020);
+INSERT INTO `League_Player` VALUES ('butch@xyz.club','alexander mclintoch trophy',2019),('butch@xyz.club','alexander mclintoch trophy',2020),('final_fantasy_freak1993@hotmail.com','alexander mclintoch trophy',2018),('final_fantasy_freak1993@hotmail.com','alexander mclintoch trophy',2019),('gary_the_man@yahoo.co.uk','alexander mclintoch trophy',2019),('gary_the_man@yahoo.co.uk','alexander mclintoch trophy',2020),('gary_the_man@yahoo.co.uk','oldies cup',2018),('gary_the_man@yahoo.co.uk','oldies cup',2019),('gary_the_man@yahoo.co.uk','oldies cup',2020),('jwh@hotmail.com','alexander mclintoch trophy',2018),('jwh@hotmail.com','alexander mclintoch trophy',2019),('louis.payne@gmail.com','alexander mclintoch trophy',2018),('srrogers@yahoo.co.uk','oldies cup',2018),('srrogers@yahoo.co.uk','oldies cup',2019),('sylvia.hathaway@gmail.com','alexander mclintoch trophy',2018),('sylvia.hathaway@gmail.com','alexander mclintoch trophy',2019),('sylvia.hathaway@gmail.com','alexander mclintoch trophy',2020),('tabitha.stacey@gmail.com','alexander mclintoch trophy',2018),('tabitha.stacey@gmail.com','alexander mclintoch trophy',2019),('tabitha.stacey@gmail.com','alexander mclintoch trophy',2020),('tasha.marsden@gmail.com','oldies cup',2018),('tasha.marsden@gmail.com','oldies cup',2019),('tasha.marsden@gmail.com','oldies cup',2020),('u_marsden@gmail.com','oldies cup',2018),('u_marsden@gmail.com','oldies cup',2019),('u_marsden@gmail.com','oldies cup',2020);
 /*!40000 ALTER TABLE `League_Player` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -105,32 +105,32 @@ DROP TABLE IF EXISTS `Played_Match`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Played_Match` (
-  `p1_email` varchar(50) DEFAULT NULL,
-  `p2_email` varchar(50) DEFAULT NULL,
-  `p1_games_won` int(11) DEFAULT NULL,
-  `p2_games_won` int(11) DEFAULT NULL,
+  `p1_email` varchar(50) NOT NULL,
+  `p2_email` varchar(50) NOT NULL,
+  `p1_games_won` tinyint(3) unsigned DEFAULT NULL,
+  `p2_games_won` tinyint(3) unsigned DEFAULT NULL,
   `date_played` date DEFAULT NULL,
-  `court_number` int(11) DEFAULT NULL,
-  `venue_name` varchar(50) DEFAULT NULL,
-  `league_name` varchar(50) DEFAULT NULL,
-  `league_year` int(11) DEFAULT NULL,
-  `id` int(11) NOT NULL,
+  `court_number` tinyint(3) unsigned NOT NULL,
+  `venue_name` varchar(50) NOT NULL,
+  `league_name` varchar(50) NOT NULL,
+  `league_year` smallint(5) unsigned NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
-  KEY `p2_email` (`p2_email`),
   KEY `venue_name` (`venue_name`),
   KEY `court_number` (`court_number`,`venue_name`),
   KEY `league_name` (`league_name`,`league_year`),
   KEY `p1_email` (`p1_email`,`league_name`,`league_year`),
+  KEY `p2_email` (`p2_email`,`league_name`,`league_year`),
   CONSTRAINT `played_match_ibfk_1` FOREIGN KEY (`p1_email`) REFERENCES `Player` (`email`),
   CONSTRAINT `played_match_ibfk_2` FOREIGN KEY (`p2_email`) REFERENCES `Player` (`email`),
   CONSTRAINT `played_match_ibfk_3` FOREIGN KEY (`venue_name`) REFERENCES `Venue` (`name`),
-  CONSTRAINT `played_match_ibfk_4` FOREIGN KEY (`p1_email`) REFERENCES `Player` (`email`),
-  CONSTRAINT `played_match_ibfk_5` FOREIGN KEY (`court_number`, `venue_name`) REFERENCES `Court` (`number`, `venue_name`),
-  CONSTRAINT `played_match_ibfk_6` FOREIGN KEY (`league_name`, `league_year`) REFERENCES `League` (`name`, `year`),
-  CONSTRAINT `played_match_ibfk_7` FOREIGN KEY (`p1_email`, `league_name`, `league_year`) REFERENCES `League_Player` (`email`, `league_name`, `league_year`),
+  CONSTRAINT `played_match_ibfk_4` FOREIGN KEY (`court_number`, `venue_name`) REFERENCES `Court` (`number`, `venue_name`),
+  CONSTRAINT `played_match_ibfk_5` FOREIGN KEY (`league_name`, `league_year`) REFERENCES `League` (`name`, `year`),
+  CONSTRAINT `played_match_ibfk_6` FOREIGN KEY (`p1_email`, `league_name`, `league_year`) REFERENCES `League_Player` (`email`, `league_name`, `league_year`),
+  CONSTRAINT `played_match_ibfk_7` FOREIGN KEY (`p2_email`, `league_name`, `league_year`) REFERENCES `League_Player` (`email`, `league_name`, `league_year`),
   CONSTRAINT `valid_games` CHECK (`p1_games_won` = 3 and `p2_games_won` >= 0 and `p2_games_won` < 3 or `p2_games_won` = 3 and `p1_games_won` >= 0 and `p1_games_won` < 3),
   CONSTRAINT `valid_year` CHECK (year(`date_played`) = `league_year`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,7 +139,7 @@ CREATE TABLE `Played_Match` (
 
 LOCK TABLES `Played_Match` WRITE;
 /*!40000 ALTER TABLE `Played_Match` DISABLE KEYS */;
-INSERT INTO `Played_Match` VALUES ('jwh@hotmail.com','tabitha.stacey@gmail.com',2,3,'2018-04-05',1,'University Sports Centre','Alexander McLintoch trophy',2018,1),('louis.payne@gmail.com','final_fantasy_freak1993@hotmail.com',3,0,'2018-04-11',3,'University Sports Centre','Alexander McLintoch trophy',2018,2),('jwh@hotmail.com','sylvia.hathaway@gmail.com',1,3,'2018-04-17',1,'University Sports Centre','Alexander McLintoch trophy',2018,3),('louis.payne@gmail.com','jwh@hotmail.com',3,0,'2018-05-07',3,'University Sports Centre','Alexander McLintoch trophy',2018,4),('tabitha.stacey@gmail.com','final_fantasy_freak1993@hotmail.com',1,3,'2018-05-23',2,'Forthill Squash Club','Alexander McLintoch trophy',2018,5),('sylvia.hathaway@gmail.com','tabitha.stacey@gmail.com',3,2,'2018-05-25',2,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2018,6),('louis.payne@gmail.com','tabitha.stacey@gmail.com',3,1,'2018-05-28',1,'University Sports Centre','Alexander McLintoch trophy',2018,7),('final_fantasy_freak1993@hotmail.com','sylvia.hathaway@gmail.com',2,3,'2018-06-13',1,'University Sports Centre','Alexander McLintoch trophy',2018,8),('jwh@hotmail.com','final_fantasy_freak1993@hotmail.com',3,0,'2018-06-21',1,'University Sports Centre','Alexander McLintoch trophy',2018,9),('sylvia.hathaway@gmail.com','louis.payne@gmail.com',2,3,'2018-07-09',3,'University Sports Centre','Alexander McLintoch trophy',2018,10),('tabitha.stacey@gmail.com','butch@xyz.club',3,0,'2019-04-11',1,'University Sports Centre','Alexander McLintoch trophy',2019,11),('butch@xyz.club','final_fantasy_freak1993@hotmail.com',0,3,'2019-04-12',1,'University Sports Centre','Alexander McLintoch trophy',2019,12),('sylvia.hathaway@gmail.com','butch@xyz.club',0,3,'2019-04-16',3,'University Sports Centre','Alexander McLintoch trophy',2019,13),('gary_the_man@yahoo.co.uk','tabitha.stacey@gmail.com',1,3,'2019-04-19',1,'University Sports Centre','Alexander McLintoch trophy',2019,14),('jwh@hotmail.com','sylvia.hathaway@gmail.com',3,2,'2019-04-24',2,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2019,15),('gary_the_man@yahoo.co.uk','final_fantasy_freak1993@hotmail.com',3,2,'2019-04-30',2,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2019,16),('sylvia.hathaway@gmail.com','final_fantasy_freak1993@hotmail.com',1,3,'2019-05-03',4,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2019,17),('tabitha.stacey@gmail.com','final_fantasy_freak1993@hotmail.com',3,0,'2019-05-13',3,'University Sports Centre','Alexander McLintoch trophy',2019,18),('jwh@hotmail.com','final_fantasy_freak1993@hotmail.com',1,3,'2019-05-21',3,'University Sports Centre','Alexander McLintoch trophy',2019,19),('gary_the_man@yahoo.co.uk','sylvia.hathaway@gmail.com',1,3,'2019-06-06',4,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2019,20),('tabitha.stacey@gmail.com','sylvia.hathaway@gmail.com',3,2,'2019-06-28',1,'University Sports Centre','Alexander McLintoch trophy',2019,21),('jwh@hotmail.com','tabitha.stacey@gmail.com',0,3,'2019-07-15',2,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2019,22),('jwh@hotmail.com','gary_the_man@yahoo.co.uk',0,3,'2019-07-17',1,'University Sports Centre','Alexander McLintoch trophy',2019,23),('jwh@hotmail.com','butch@xyz.club',2,3,'2019-07-22',1,'University Sports Centre','Alexander McLintoch trophy',2019,24),('gary_the_man@yahoo.co.uk','butch@xyz.club',3,1,'2019-07-26',1,'University Sports Centre','Alexander McLintoch trophy',2019,25),('tabitha.stacey@gmail.com','butch@xyz.club',3,1,'2020-05-05',1,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2020,26),('butch@xyz.club','sylvia.hathaway@gmail.com',1,3,'2020-05-15',2,'Waterstone Crook Sports Centre','Alexander McLintoch trophy',2020,27),('gary_the_man@yahoo.co.uk','sylvia.hathaway@gmail.com',1,3,'2020-05-26',1,'East Sands Leisure Centre','Alexander McLintoch trophy',2020,28),('tabitha.stacey@gmail.com','sylvia.hathaway@gmail.com',0,3,'2020-05-28',1,'East Sands Leisure Centre','Alexander McLintoch trophy',2020,29),('tabitha.stacey@gmail.com','gary_the_man@yahoo.co.uk',3,2,'2020-07-03',2,'East Sands Leisure Centre','Alexander McLintoch trophy',2020,30),('butch@xyz.club','gary_the_man@yahoo.co.uk',3,2,'2020-07-06',3,'University Sports Centre','Alexander McLintoch trophy',2020,31),('srrogers@yahoo.co.uk','tasha.marsden@gmail.com',3,0,'2018-09-30',1,'Waterstone Crook Sports Centre','Oldies cup',2018,32),('gary_the_man@yahoo.co.uk','u_marsden@gmail.com',3,2,'2018-10-28',2,'Forthill Squash Club','Oldies cup',2018,33),('srrogers@yahoo.co.uk','u_marsden@gmail.com',3,1,'2018-11-02',1,'Waterstone Crook Sports Centre','Oldies cup',2018,34),('gary_the_man@yahoo.co.uk','tasha.marsden@gmail.com',0,3,'2018-11-04',4,'Waterstone Crook Sports Centre','Oldies cup',2018,35),('tasha.marsden@gmail.com','u_marsden@gmail.com',1,3,'2018-11-06',2,'Forthill Squash Club','Oldies cup',2018,36),('gary_the_man@yahoo.co.uk','srrogers@yahoo.co.uk',1,3,'2018-11-09',2,'Waterstone Crook Sports Centre','Oldies cup',2018,37),('tasha.marsden@gmail.com','u_marsden@gmail.com',3,1,'2019-09-27',2,'Waterstone Crook Sports Centre','Oldies cup',2019,38),('srrogers@yahoo.co.uk','u_marsden@gmail.com',3,2,'2019-09-29',2,'Waterstone Crook Sports Centre','Oldies cup',2019,39),('gary_the_man@yahoo.co.uk','tasha.marsden@gmail.com',2,3,'2019-09-29',4,'Waterstone Crook Sports Centre','Oldies cup',2019,40),('srrogers@yahoo.co.uk','tasha.marsden@gmail.com',3,0,'2019-10-02',1,'Forthill Squash Club','Oldies cup',2019,41),('gary_the_man@yahoo.co.uk','srrogers@yahoo.co.uk',0,3,'2019-10-09',1,'Waterstone Crook Sports Centre','Oldies cup',2019,42),('gary_the_man@yahoo.co.uk','u_marsden@gmail.com',3,1,'2019-10-30',3,'University Sports Centre','Oldies cup',2019,43),('tasha.marsden@gmail.com','u_marsden@gmail.com',2,3,'2020-10-02',1,'Waterstone Crook Sports Centre','Oldies cup',2020,44),('gary_the_man@yahoo.co.uk','tasha.marsden@gmail.com',3,0,'2020-10-09',2,'Waterstone Crook Sports Centre','Oldies cup',2020,45),('gary_the_man@yahoo.co.uk','u_marsden@gmail.com',1,3,'2020-11-05',1,'Forthill Squash Club','Oldies cup',2020,46);
+INSERT INTO `Played_Match` VALUES ('jwh@hotmail.com','tabitha.stacey@gmail.com',2,3,'2018-04-05',1,'University Sports Centre','alexander mclintoch trophy',2018,1),('louis.payne@gmail.com','final_fantasy_freak1993@hotmail.com',3,0,'2018-04-11',3,'University Sports Centre','alexander mclintoch trophy',2018,2),('jwh@hotmail.com','sylvia.hathaway@gmail.com',1,3,'2018-04-17',1,'University Sports Centre','alexander mclintoch trophy',2018,3),('louis.payne@gmail.com','jwh@hotmail.com',3,0,'2018-05-07',3,'University Sports Centre','alexander mclintoch trophy',2018,4),('tabitha.stacey@gmail.com','final_fantasy_freak1993@hotmail.com',1,3,'2018-05-23',2,'Forthill Squash Club','alexander mclintoch trophy',2018,5),('sylvia.hathaway@gmail.com','tabitha.stacey@gmail.com',3,2,'2018-05-25',2,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2018,6),('louis.payne@gmail.com','tabitha.stacey@gmail.com',3,1,'2018-05-28',1,'University Sports Centre','alexander mclintoch trophy',2018,7),('final_fantasy_freak1993@hotmail.com','sylvia.hathaway@gmail.com',2,3,'2018-06-13',1,'University Sports Centre','alexander mclintoch trophy',2018,8),('jwh@hotmail.com','final_fantasy_freak1993@hotmail.com',3,0,'2018-06-21',1,'University Sports Centre','alexander mclintoch trophy',2018,9),('sylvia.hathaway@gmail.com','louis.payne@gmail.com',2,3,'2018-07-09',3,'University Sports Centre','alexander mclintoch trophy',2018,10),('tabitha.stacey@gmail.com','butch@xyz.club',3,0,'2019-04-11',1,'University Sports Centre','alexander mclintoch trophy',2019,11),('butch@xyz.club','final_fantasy_freak1993@hotmail.com',0,3,'2019-04-12',1,'University Sports Centre','alexander mclintoch trophy',2019,12),('sylvia.hathaway@gmail.com','butch@xyz.club',0,3,'2019-04-16',3,'University Sports Centre','alexander mclintoch trophy',2019,13),('gary_the_man@yahoo.co.uk','tabitha.stacey@gmail.com',1,3,'2019-04-19',1,'University Sports Centre','alexander mclintoch trophy',2019,14),('jwh@hotmail.com','sylvia.hathaway@gmail.com',3,2,'2019-04-24',2,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2019,15),('gary_the_man@yahoo.co.uk','final_fantasy_freak1993@hotmail.com',3,2,'2019-04-30',2,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2019,16),('sylvia.hathaway@gmail.com','final_fantasy_freak1993@hotmail.com',1,3,'2019-05-03',4,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2019,17),('tabitha.stacey@gmail.com','final_fantasy_freak1993@hotmail.com',3,0,'2019-05-13',3,'University Sports Centre','alexander mclintoch trophy',2019,18),('jwh@hotmail.com','final_fantasy_freak1993@hotmail.com',1,3,'2019-05-21',3,'University Sports Centre','alexander mclintoch trophy',2019,19),('gary_the_man@yahoo.co.uk','sylvia.hathaway@gmail.com',1,3,'2019-06-06',4,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2019,20),('tabitha.stacey@gmail.com','sylvia.hathaway@gmail.com',3,2,'2019-06-28',1,'University Sports Centre','alexander mclintoch trophy',2019,21),('jwh@hotmail.com','tabitha.stacey@gmail.com',0,3,'2019-07-15',2,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2019,22),('jwh@hotmail.com','gary_the_man@yahoo.co.uk',0,3,'2019-07-17',1,'University Sports Centre','alexander mclintoch trophy',2019,23),('jwh@hotmail.com','butch@xyz.club',2,3,'2019-07-22',1,'University Sports Centre','alexander mclintoch trophy',2019,24),('gary_the_man@yahoo.co.uk','butch@xyz.club',3,1,'2019-07-26',1,'University Sports Centre','alexander mclintoch trophy',2019,25),('tabitha.stacey@gmail.com','butch@xyz.club',3,1,'2020-05-05',1,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2020,26),('butch@xyz.club','sylvia.hathaway@gmail.com',1,3,'2020-05-15',2,'Waterstone Crook Sports Centre','alexander mclintoch trophy',2020,27),('gary_the_man@yahoo.co.uk','sylvia.hathaway@gmail.com',1,3,'2020-05-26',1,'East Sands Leisure Centre','alexander mclintoch trophy',2020,28),('tabitha.stacey@gmail.com','sylvia.hathaway@gmail.com',0,3,'2020-05-28',1,'East Sands Leisure Centre','alexander mclintoch trophy',2020,29),('tabitha.stacey@gmail.com','gary_the_man@yahoo.co.uk',3,2,'2020-07-03',2,'East Sands Leisure Centre','alexander mclintoch trophy',2020,30),('butch@xyz.club','gary_the_man@yahoo.co.uk',3,2,'2020-07-06',3,'University Sports Centre','alexander mclintoch trophy',2020,31),('srrogers@yahoo.co.uk','tasha.marsden@gmail.com',3,0,'2018-09-30',1,'Waterstone Crook Sports Centre','oldies cup',2018,32),('gary_the_man@yahoo.co.uk','u_marsden@gmail.com',3,2,'2018-10-28',2,'Forthill Squash Club','oldies cup',2018,33),('srrogers@yahoo.co.uk','u_marsden@gmail.com',3,1,'2018-11-02',1,'Waterstone Crook Sports Centre','oldies cup',2018,34),('gary_the_man@yahoo.co.uk','tasha.marsden@gmail.com',0,3,'2018-11-04',4,'Waterstone Crook Sports Centre','oldies cup',2018,35),('tasha.marsden@gmail.com','u_marsden@gmail.com',1,3,'2018-11-06',2,'Forthill Squash Club','oldies cup',2018,36),('gary_the_man@yahoo.co.uk','srrogers@yahoo.co.uk',1,3,'2018-11-09',2,'Waterstone Crook Sports Centre','oldies cup',2018,37),('tasha.marsden@gmail.com','u_marsden@gmail.com',3,1,'2019-09-27',2,'Waterstone Crook Sports Centre','oldies cup',2019,38),('srrogers@yahoo.co.uk','u_marsden@gmail.com',3,2,'2019-09-29',2,'Waterstone Crook Sports Centre','oldies cup',2019,39),('gary_the_man@yahoo.co.uk','tasha.marsden@gmail.com',2,3,'2019-09-29',4,'Waterstone Crook Sports Centre','oldies cup',2019,40),('srrogers@yahoo.co.uk','tasha.marsden@gmail.com',3,0,'2019-10-02',1,'Forthill Squash Club','oldies cup',2019,41),('gary_the_man@yahoo.co.uk','srrogers@yahoo.co.uk',0,3,'2019-10-09',1,'Waterstone Crook Sports Centre','oldies cup',2019,42),('gary_the_man@yahoo.co.uk','u_marsden@gmail.com',3,1,'2019-10-30',3,'University Sports Centre','oldies cup',2019,43),('tasha.marsden@gmail.com','u_marsden@gmail.com',2,3,'2020-10-02',1,'Waterstone Crook Sports Centre','oldies cup',2020,44),('gary_the_man@yahoo.co.uk','tasha.marsden@gmail.com',3,0,'2020-10-09',2,'Waterstone Crook Sports Centre','oldies cup',2020,45),('gary_the_man@yahoo.co.uk','u_marsden@gmail.com',1,3,'2020-11-05',1,'Forthill Squash Club','oldies cup',2020,46);
 /*!40000 ALTER TABLE `Played_Match` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,9 +223,67 @@ INSERT INTO `Venue` VALUES ('East Sands Leisure Centre','2 St Mary St St Andrews
 UNLOCK TABLES;
 
 --
+-- Temporary table structure for view `view_contact_details`
+--
+
+DROP TABLE IF EXISTS `view_contact_details`;
+/*!50001 DROP VIEW IF EXISTS `view_contact_details`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `view_contact_details` (
+  `Full name` tinyint NOT NULL,
+  `Email address` tinyint NOT NULL,
+  `Phone number(s)` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `view_never_played`
+--
+
+DROP TABLE IF EXISTS `view_never_played`;
+/*!50001 DROP VIEW IF EXISTS `view_never_played`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `view_never_played` (
+  `Court number` tinyint NOT NULL,
+  `Venue name` tinyint NOT NULL,
+  `Address` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `view_rank_players`
+--
+
+DROP TABLE IF EXISTS `view_rank_players`;
+/*!50001 DROP VIEW IF EXISTS `view_rank_players`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `view_rank_players` (
+  `Full name` tinyint NOT NULL,
+  `Total Prize` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `view_win_count`
+--
+
+DROP TABLE IF EXISTS `view_win_count`;
+/*!50001 DROP VIEW IF EXISTS `view_win_count`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `view_win_count` (
+  `Email address` tinyint NOT NULL,
+  `Number of matches won` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Dumping routines for database 'hy30_db'
 --
-/*!50003 DROP PROCEDURE IF EXISTS `proc` */;
+/*!50003 DROP PROCEDURE IF EXISTS `proc_add_venue` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -235,15 +293,124 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`dengpeiyao`@`localhost` PROCEDURE `proc`(OUT param INT)
+CREATE DEFINER=`dengpeiyao`@`localhost` PROCEDURE `proc_add_venue`(IN venue_name varchar(50), IN venue_address varchar(50), IN max_court INTEGER)
 begin
-select count(*) into param from player;
+start transaction;
+if max_court < 0 then
+signal sqlstate '45001' set message_text = "Negative max_court value";
+end if;
+insert into Venue values(venue_name, venue_address);
+for i in 1..max_court
+do
+insert into Court values (i, venue_name);
+end for;
+commit; end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `proc_delete_venue` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`dengpeiyao`@`localhost` PROCEDURE `proc_delete_venue`(IN venue_name varchar(50))
+begin
+start transaction;
+if venue_name not in (select name from Venue) then
+signal sqlstate '45001' set message_text = "Unknown Venue Name";
+end if;
+DELETE FROM Court WHERE Court.venue_name = venue_name;
+DELETE FROM Venue WHERE Venue.name = venue_name;
+commit;
 end ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `view_contact_details`
+--
+
+/*!50001 DROP TABLE IF EXISTS `view_contact_details`*/;
+/*!50001 DROP VIEW IF EXISTS `view_contact_details`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_contact_details` AS select concat_ws(' ',`player`.`forename`,`player`.`middlenames`,`player`.`surname`) AS `Full name`,`player`.`email` AS `Email address`,group_concat(`player_phone`.`phone_number` separator ',') AS `Phone number(s)` from (`player` join `player_phone`) where `player`.`email` = `player_phone`.`email` group by `player`.`email` order by `player`.`surname`,concat_ws(' ',`player`.`forename`,`player`.`middlenames`,`player`.`surname`),`player`.`email` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_never_played`
+--
+
+/*!50001 DROP TABLE IF EXISTS `view_never_played`*/;
+/*!50001 DROP VIEW IF EXISTS `view_never_played`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_never_played` AS select `a`.`number` AS `Court number`,`a`.`venue_name` AS `Venue name`,`hy30_db`.`venue`.`address` AS `Address` from (`hy30_db`.`venue` join (select distinct `hy30_db`.`court`.`number` AS `number`,`hy30_db`.`court`.`venue_name` AS `venue_name` from (`hy30_db`.`court` left join `hy30_db`.`played_match` on(`hy30_db`.`court`.`venue_name` = `hy30_db`.`played_match`.`venue_name` and `hy30_db`.`court`.`number` = `hy30_db`.`played_match`.`court_number`)) where `hy30_db`.`played_match`.`id` is null order by `hy30_db`.`court`.`venue_name`,`hy30_db`.`court`.`number`) `a`) where `a`.`venue_name` = `hy30_db`.`venue`.`name` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_rank_players`
+--
+
+/*!50001 DROP TABLE IF EXISTS `view_rank_players`*/;
+/*!50001 DROP VIEW IF EXISTS `view_rank_players`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_rank_players` AS select concat_ws(' ',`player`.`forename`,`player`.`middlenames`,`player`.`surname`) AS `Full name`,sum(`league`.`prize_money`) AS `Total Prize` from (`player` join `league`) where `player`.`email` = `league`.`winner_email` group by `league`.`winner_email` order by sum(`league`.`prize_money`) desc */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_win_count`
+--
+
+/*!50001 DROP TABLE IF EXISTS `view_win_count`*/;
+/*!50001 DROP VIEW IF EXISTS `view_win_count`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_win_count` AS select `winner`.`winner_email` AS `Email address`,count(`winner`.`id`) AS `Number of matches won` from (select `hy30_db`.`played_match`.`id` AS `id`,case when `hy30_db`.`played_match`.`p1_games_won` > `hy30_db`.`played_match`.`p2_games_won` then `hy30_db`.`played_match`.`p1_email` else `hy30_db`.`played_match`.`p2_email` end AS `winner_email` from `hy30_db`.`played_match`) `Winner` group by `winner`.`winner_email` order by `winner`.`winner_email` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -254,4 +421,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-20 18:33:36
+-- Dump completed on 2021-04-22 16:49:34

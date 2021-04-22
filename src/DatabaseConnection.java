@@ -1,12 +1,9 @@
 import Models.*;
-
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 import javax.swing.*;
-import java.awt.event.*;
 import java.sql.Date;
 import java.util.*;
 
@@ -22,7 +19,7 @@ public class DatabaseConnection {
 //        initCourts("src/Courts.csv");
 //        initLeague("src/Leagues.csv");
 //        initLeaguePlayer("src/LeaguePlayer.csv");
-        initMatches("src/Matches.csv");
+//        initMatches("src/Matches.csv");
 //        addProcAddVenue("New Club", "North Street", 3);
     }
 
@@ -208,7 +205,7 @@ public class DatabaseConnection {
             // init Player table
             statement.executeUpdate("DROP TABLE IF EXISTS Court");
             String sql = "CREATE TABLE Court"
-                    + "(number INTEGER not NULL, "
+                    + "(number TINYINT UNSIGNED not NULL, "
                     + "venue_name VARCHAR(50) not NULL, "
                     + "PRIMARY KEY (number, venue_name), " +
                     "FOREIGN KEY (venue_name) REFERENCES Venue(name)" +
@@ -259,18 +256,18 @@ public class DatabaseConnection {
                     "(" +
                     "p1_email VARCHAR(50) NOT NULL, " +
                     "p2_email VARCHAR(50) NOT NULL, " +
-                    "p1_games_won INTEGER, " +
-                    "p2_games_won INTEGER, " +
+                    "p1_games_won TINYINT UNSIGNED, " +
+                    "p2_games_won TINYINT UNSIGNED, " +
                     "CONSTRAINT valid_games " +
                         "CHECK ((p1_games_won = 3 AND p2_games_won >= 0 AND p2_games_won < 3) " +
                         "OR (p2_games_won = 3 AND p1_games_won >= 0 AND p1_games_won < 3)), " +
                     "date_played DATE, " +
                     "CONSTRAINT valid_year " +
                         "CHECK (year(date_played) = league_year), " +
-                    "court_number INTEGER NOT NULL, " +
+                    "court_number TINYINT UNSIGNED NOT NULL, " +
                     "venue_name VARCHAR(50) NOT NULL, " +
                     "league_name VARCHAR(50) NOT NULL, " +
-                    "league_year INTEGER NOT NULL, " +
+                    "league_year SMALLINT UNSIGNED NOT NULL, " +
                     "id INTEGER not NULL AUTO_INCREMENT, " +
                     "PRIMARY KEY (id), " +
                     "FOREIGN KEY (p1_email) REFERENCES Player(email), " +
@@ -305,7 +302,7 @@ public class DatabaseConnection {
                 }
                 Date datePlayed = Date.valueOf(dateFormat);
                 int leagueYear = Integer.parseInt(parts[7]);
-                String leagueName = parts[8];
+                String leagueName = parts[8].toLowerCase();
 
                 preparedStatement = connection.prepareStatement(sql);
 
@@ -318,8 +315,7 @@ public class DatabaseConnection {
                 preparedStatement.setString(7, venueName);
                 preparedStatement.setString(8, leagueName);
                 preparedStatement.setInt(9, leagueYear);
-//                preparedStatement.setInt(10, id);
-//                id++;
+
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
 
@@ -352,7 +348,7 @@ public class DatabaseConnection {
             String sql = "CREATE TABLE League" +
                     "(" +
                     "name VARCHAR(50) not NULL, " +
-                    "year INTEGER not NULL, " +
+                    "year SMALLINT UNSIGNED not NULL, " +
                     "prize_money FLOAT, " +
                     "winner_email VARCHAR(50), " +
                     "PRIMARY KEY (name, year), " +
@@ -365,7 +361,7 @@ public class DatabaseConnection {
 
             while((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                String name = parts[0];
+                String name = parts[0].toLowerCase();
                 int year = Integer.parseInt(parts[1]);
                 float prizeMoney = Float.parseFloat(parts[2]);
                 String winnerEmail = parts[3];
@@ -407,7 +403,7 @@ public class DatabaseConnection {
                     "(" +
                     "email VARCHAR(50) not NULL, " +
                     "league_name VARCHAR(50) not NULL, " +
-                    "league_year INTEGER not NULL, " +
+                    "league_year SMALLINT UNSIGNED not NULL, " +
                     "PRIMARY KEY (email, league_name, league_year), " +
                     "FOREIGN KEY (email) REFERENCES Player(email), " +
                     "FOREIGN KEY (league_name, league_year) REFERENCES League(name, year) " +
@@ -420,7 +416,7 @@ public class DatabaseConnection {
             while((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
                 String email = parts[0];
-                String leagueName = parts[1];
+                String leagueName = parts[1].toLowerCase();
                 int leagueYear = Integer.parseInt(parts[2]);
 
                 preparedStatement = connection.prepareStatement(sql);
@@ -698,6 +694,7 @@ public class DatabaseConnection {
                                    int leagueYear){
         Connection connection = makeConnection();
         PreparedStatement preparedStatement = null;
+        leagueName = leagueName.toLowerCase();
         try{
             String query = "INSERT INTO Played_Match (p1_email, p2_email, p1_games_won, p2_games_won, date_played, court_number," +
                     " venue_name, league_name, league_year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -717,6 +714,12 @@ public class DatabaseConnection {
 
             connection.close();
             preparedStatement.close();
+
+            JOptionPane.showMessageDialog(null, "Insert a Match Successfully!");
+        }
+        catch (SQLIntegrityConstraintViolationException e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return;
         }
         catch (SQLException e){
             e.printStackTrace();

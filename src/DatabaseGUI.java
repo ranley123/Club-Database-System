@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.xml.crypto.Data;
 import java.awt.event.*;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -379,16 +378,6 @@ public class DatabaseGUI implements ActionListener {
                 String venueName = venueNameTf.getText();
                 String leagueName = leagueNameTf.getText();
 
-//                p1Email = "ranley0109@gmail.com";
-//                p2Email = "yuhuan0109@gmail.com";
-//                p1GamesWon = 1;
-//                p2GamesWon = 3;
-//                datePlayed = Date.valueOf("2020-01-09");
-//                courtNumber = 1;
-//                venueName = "University Sports Centre";
-//                leagueName = "Alexander McLintoch trophy";
-//                leagueYear = 2020;
-
                 DatabaseConnection.insertMatch(p1Email, p2Email, p1GamesWon, p2GamesWon, datePlayed, courtNumber, venueName, leagueName, leagueYear);
             }
         }
@@ -396,6 +385,7 @@ public class DatabaseGUI implements ActionListener {
 
     public static void main(String[] args) {
         DatabaseGUI gui = new DatabaseGUI();
+//        DatabaseConnection.initDatabase();
 //        printDatabase("League");
 //        DatabaseConnection.getAllPlayers();
 //        getAllLeagueYearsByName("Alexander McLintoch trophy");
