@@ -14,13 +14,12 @@ public class DatabaseConnection {
      */
     public static void initDatabase() {
         Connection connection = makeConnection();
-//        initPlayer("src/People.csv");
-//        initVenues("src/Venues.csv");
-//        initCourts("src/Courts.csv");
-//        initLeague("src/Leagues.csv");
-//        initLeaguePlayer("src/LeaguePlayer.csv");
-//        initMatches("src/Matches.csv");
-//        addProcAddVenue("New Club", "North Street", 3);
+        initPlayer("src/People.csv");
+        initVenues("src/Venues.csv");
+        initCourts("src/Courts.csv");
+        initLeague("src/Leagues.csv");
+        initLeaguePlayer("src/LeaguePlayer.csv");
+        initMatches("src/Matches.csv");
     }
 
     /**
@@ -700,7 +699,6 @@ public class DatabaseConnection {
                     " venue_name, league_name, league_year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(query);
 
-            // TODO: error string and exceptions
             preparedStatement.setString(1, p1Email);
             preparedStatement.setString(2, p2Email);
             preparedStatement.setInt(3, p1GamesWon);
@@ -726,7 +724,6 @@ public class DatabaseConnection {
         }
     }
 
-    // TODO: new view to rank players based on their prize money
     public static LinkedHashMap<String, String> rankPlayers(){
         Connection connection = null;
         Statement statement = null;
@@ -756,6 +753,4 @@ public class DatabaseConnection {
 
         return map;
     }
-
-//    create procedure proc_delete_venue(IN venue_name VARCHAR(50)) begin start transaction; delete from court where court.venue_name = venue_name; delete from venue where venue.name = venue_name; commit; end;//
 }

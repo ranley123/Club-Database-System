@@ -37,7 +37,6 @@ public class DatabaseGUI implements ActionListener {
 
     public DatabaseGUI() {
         initInterface();
-//        DatabaseConnection.initDatabase();
     }
 
     private void initInterface() {
@@ -51,6 +50,7 @@ public class DatabaseGUI implements ActionListener {
         checkUnusedCourtsItem = new JMenuItem("Check Unused Courts");
         checkRankPlayersItem = new JMenuItem("Check Player Ranking");
 
+        // this defines the format of the table
         tableData = new DefaultTableModel() {
             public Class getColumnClass(int columnIndex) {
                 return getValueAt(0, columnIndex).getClass();
@@ -61,7 +61,7 @@ public class DatabaseGUI implements ActionListener {
             }
         };
 
-
+        // get available league names to be searched
         ArrayList<String> leagueNameList = DatabaseConnection.getAllLeagueNames();
         String[] leagueNames = new String[leagueNameList.size()];
 
@@ -103,6 +103,7 @@ public class DatabaseGUI implements ActionListener {
         }
         leagueYearCombo = new JComboBox(leagueYears);
 
+        // create textfields for search a specic league and insert a new match
         GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
         hGroup.addGap(5);
         hGroup.addGroup(layout.createParallelGroup()
@@ -195,23 +196,21 @@ public class DatabaseGUI implements ActionListener {
         searchBtn.addActionListener(this);
         insertBtn.addActionListener(this);
 
+        // set up popup menu
         popupMenu.add(checkAllPlayersItem);
         popupMenu.add(checkWonPlayersItem);
         popupMenu.add(checkUnusedCourtsItem);
         popupMenu.add(checkRankPlayersItem);
 
         mainFrame.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mousePressed(MouseEvent e) {
                 showPopup(e);
             }
-
             @Override
             public void mouseReleased(MouseEvent e) {
                 showPopup(e);
             }
-
             private void showPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     popupMenu.show(e.getComponent(),
@@ -231,11 +230,11 @@ public class DatabaseGUI implements ActionListener {
 
         mainFrame.add(panel, BorderLayout.NORTH);
         mainFrame.add(scrollPane, BorderLayout.SOUTH);
-//
         mainFrame.setSize(800, 900);
         mainFrame.setVisible(true);
     }
 
+    // view_contact_details code
     public void checkAllPlayers() {
         ArrayList<Model> players = DatabaseConnection.getAllPlayers();
         if (players.isEmpty()) {
@@ -251,6 +250,7 @@ public class DatabaseGUI implements ActionListener {
         }
     }
 
+    // view_win_count code
     private void checkWonPlayers() {
         LinkedHashMap<String, Integer> map = DatabaseConnection.getAllWonPlayers();
         if (map.isEmpty()) {
@@ -274,6 +274,7 @@ public class DatabaseGUI implements ActionListener {
         }
     }
 
+    // view_never_played code
     private void checkUnusedCourts() {
         ArrayList<Model> courts = DatabaseConnection.getUnUsedCourt();
         if (courts.isEmpty()) {
@@ -288,6 +289,7 @@ public class DatabaseGUI implements ActionListener {
         }
     }
 
+    // check a specific league
     private void checkLeague(String leagueName, int leagueYear) {
         ArrayList<Model> matches = DatabaseConnection.getLeagueMatches(leagueName, leagueYear);
         if (matches.isEmpty())
@@ -303,6 +305,7 @@ public class DatabaseGUI implements ActionListener {
         }
     }
 
+    // check players ranking by their prize
     private void checkRankingPlayers() {
         LinkedHashMap<String, String> map = DatabaseConnection.rankPlayers();
         if (map.isEmpty()) {
@@ -326,6 +329,7 @@ public class DatabaseGUI implements ActionListener {
         }
     }
 
+    // convert information to table format
     private Object[][] convertToTableData(ArrayList<Model> dataList, String[] columnNames) {
         Object[][] data = new Object[dataList.size()][columnNames.length];
         for (int i = 0; i < dataList.size(); i++) {
@@ -396,15 +400,6 @@ public class DatabaseGUI implements ActionListener {
 
     public static void main(String[] args) {
         DatabaseGUI gui = new DatabaseGUI();
-//        DatabaseConnection.initDatabase();
-//        printDatabase("League");
-//        DatabaseConnection.getAllPlayers();
-//        getAllLeagueYearsByName("Alexander McLintoch trophy");
-//        addProcAddVenue();
-//        DatabaseConnection.rankPlayers();
-//        DatabaseConnection.getUnUsedCourt();
-//        DatabaseConnection.getAllPlayers();
-//        DatabaseConnection.getAllWonPlayers();
     }
 
 }
