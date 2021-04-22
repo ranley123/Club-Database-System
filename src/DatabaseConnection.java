@@ -28,16 +28,15 @@ public class DatabaseConnection {
      */
     public static Connection makeConnection() {
         Connection connection = null;
-
+        // please change username and password!
         try {
-//            String dbUrl = "jdbc:sqlite:test";
             String dbUrl = "jdbc:mariadb://localhost/hy30_db";
-//            String uname = "hy30";mysqld_safe --skip-grant-tables &
-//            String passwd = ".611MKA73dHitM";
+            String username = "root";
+            String password = "buzhidao";
 
-            System.out.println("Connecting to Database ...");
-            connection = DriverManager.getConnection(dbUrl, "root", "buzhidao");
-            System.out.println("Database Connected!");
+//            System.out.println("Connecting to Database ...");
+            connection = DriverManager.getConnection(dbUrl, username, password);
+//            System.out.println("Database Connected!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
